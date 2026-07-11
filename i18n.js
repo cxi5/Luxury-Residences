@@ -203,6 +203,65 @@ const TRANSLATIONS = {
     pwa_install_msg:    'Instalar app na tela inicial',
     pwa_dismiss:        'Agora não',
     pwa_install:        'Instalar',
+
+    // ── AUTH ──
+    auth_brand_sub:         'Rio de Janeiro · 5 estrelas',
+    auth_tab_login:         'Entrar',
+    auth_tab_signup:        'Criar conta',
+
+    auth_login_title:       'Bem-vindo de volta',
+    auth_login_subtitle:    'Entre para gerenciar suas estadias e reservas.',
+    auth_label_email:       'E-mail',
+    auth_label_password:    'Senha',
+    auth_remember:          'Manter conectado',
+    auth_forgot_link:       'Esqueci a senha',
+    auth_btn_login:         'Entrar',
+    auth_login_switch:      'Ainda não tem conta?',
+
+    auth_signup_title:      'Criar sua conta',
+    auth_signup_subtitle:   'Leva menos de um minuto.',
+    auth_label_name:        'Nome completo',
+    auth_label_password_confirm: 'Confirmar senha',
+    auth_terms_text:        'Concordo com os Termos e a Privacidade',
+    auth_btn_signup:        'Criar conta',
+    auth_signup_switch:     'Já tem conta?',
+
+    auth_forgot_title:      'Recuperar senha',
+    auth_forgot_subtitle:   'Enviaremos um link de redefinição para o seu e-mail.',
+    auth_btn_forgot:        'Enviar link',
+    auth_back:               'Voltar',
+
+    auth_check_title_signup: 'Verifique seu e-mail',
+    auth_check_text_signup:  'Enviamos um link de confirmação para {email}. Abra sua caixa de entrada para ativar sua conta.',
+    auth_check_title_forgot: 'Link enviado',
+    auth_check_text_forgot:  'Enviamos um link de redefinição de senha para {email}.',
+    auth_back_to_login:      'Voltar para o login',
+
+    auth_label_birthdate:    'Data de nascimento',
+    auth_label_country:      'País',
+    auth_country_placeholder: 'Selecione...',
+
+    auth_err_email_required:  'Informe seu e-mail.',
+    auth_err_email_invalid:   'Digite um e-mail válido.',
+    auth_err_password_required: 'Informe sua senha.',
+    auth_err_password_short:  'A senha precisa ter no mínimo 8 caracteres.',
+    auth_err_password_mismatch: 'As senhas não coincidem.',
+    auth_err_password_confirm_required: 'Confirme sua senha.',
+    auth_err_name_required:   'Informe seu nome completo.',
+    auth_err_terms_required:  'Você precisa aceitar os termos para continuar.',
+    auth_err_birthdate_required: 'Informe sua data de nascimento.',
+    auth_err_birthdate_invalid: 'Digite uma data válida.',
+    auth_err_birthdate_future: 'A data de nascimento não pode ser no futuro.',
+    auth_err_birthdate_underage: 'Você precisa ter pelo menos 18 anos para se cadastrar.',
+    auth_err_country_required: 'Selecione seu país.',
+
+    strength_0: 'Muito fraca',
+    strength_1: 'Fraca',
+    strength_2: 'Razoável',
+    strength_3: 'Forte',
+    strength_4: 'Muito forte',
+
+    sign_out: 'Sair',
   },
 
   en: {
@@ -384,6 +443,65 @@ const TRANSLATIONS = {
     pwa_install_msg:    'Install app on home screen',
     pwa_dismiss:        'Not now',
     pwa_install:        'Install',
+
+    // ── AUTH ──
+    auth_brand_sub:         'Rio de Janeiro · 5 stars',
+    auth_tab_login:         'Sign in',
+    auth_tab_signup:        'Create account',
+
+    auth_login_title:       'Welcome back',
+    auth_login_subtitle:    'Sign in to manage your stays and bookings.',
+    auth_label_email:       'Email',
+    auth_label_password:    'Password',
+    auth_remember:          'Keep me signed in',
+    auth_forgot_link:       'Forgot password',
+    auth_btn_login:         'Sign in',
+    auth_login_switch:      "Don't have an account?",
+
+    auth_signup_title:      'Create your account',
+    auth_signup_subtitle:   'Takes less than a minute.',
+    auth_label_name:        'Full name',
+    auth_label_password_confirm: 'Confirm password',
+    auth_terms_text:        'I agree to the Terms and Privacy Policy',
+    auth_btn_signup:        'Create account',
+    auth_signup_switch:     'Already have an account?',
+
+    auth_forgot_title:      'Reset password',
+    auth_forgot_subtitle:   "We'll send a reset link to your email.",
+    auth_btn_forgot:        'Send link',
+    auth_back:               'Back',
+
+    auth_check_title_signup: 'Check your email',
+    auth_check_text_signup:  'We sent a confirmation link to {email}. Open your inbox to activate your account.',
+    auth_check_title_forgot: 'Link sent',
+    auth_check_text_forgot:  'We sent a password reset link to {email}.',
+    auth_back_to_login:      'Back to sign in',
+
+    auth_label_birthdate:    'Date of birth',
+    auth_label_country:      'Country',
+    auth_country_placeholder: 'Select...',
+
+    auth_err_email_required:  'Please enter your email.',
+    auth_err_email_invalid:   'Please enter a valid email.',
+    auth_err_password_required: 'Please enter your password.',
+    auth_err_password_short:  'Password must be at least 8 characters.',
+    auth_err_password_mismatch: 'Passwords do not match.',
+    auth_err_password_confirm_required: 'Please confirm your password.',
+    auth_err_name_required:   'Please enter your full name.',
+    auth_err_terms_required:  'You need to accept the terms to continue.',
+    auth_err_birthdate_required: 'Please enter your date of birth.',
+    auth_err_birthdate_invalid: 'Please enter a valid date.',
+    auth_err_birthdate_future: 'Date of birth cannot be in the future.',
+    auth_err_birthdate_underage: 'You must be at least 18 years old to sign up.',
+    auth_err_country_required: 'Please select your country.',
+
+    strength_0: 'Very weak',
+    strength_1: 'Weak',
+    strength_2: 'Fair',
+    strength_3: 'Strong',
+    strength_4: 'Very strong',
+
+    sign_out: 'Sign out',
   },
 };
 
@@ -394,6 +512,43 @@ const CURRENCIES = {
   USD: { symbol: 'US$', locale: 'en-US', decimals: 2 },
   EUR: { symbol: '€',   locale: 'de-DE', decimals: 2 },
 };
+
+// ── COUNTRY LIST (código ISO + nome em pt/en) ─────────────────
+const COUNTRIES = [
+  { code: 'BR', pt: 'Brasil',            en: 'Brazil' },
+  { code: 'PT', pt: 'Portugal',          en: 'Portugal' },
+  { code: 'AO', pt: 'Angola',            en: 'Angola' },
+  { code: 'MZ', pt: 'Moçambique',        en: 'Mozambique' },
+  { code: 'CV', pt: 'Cabo Verde',        en: 'Cape Verde' },
+  { code: 'US', pt: 'Estados Unidos',    en: 'United States' },
+  { code: 'CA', pt: 'Canadá',            en: 'Canada' },
+  { code: 'MX', pt: 'México',            en: 'Mexico' },
+  { code: 'AR', pt: 'Argentina',         en: 'Argentina' },
+  { code: 'CL', pt: 'Chile',             en: 'Chile' },
+  { code: 'UY', pt: 'Uruguai',           en: 'Uruguay' },
+  { code: 'PY', pt: 'Paraguai',          en: 'Paraguay' },
+  { code: 'CO', pt: 'Colômbia',          en: 'Colombia' },
+  { code: 'PE', pt: 'Peru',              en: 'Peru' },
+  { code: 'GB', pt: 'Reino Unido',       en: 'United Kingdom' },
+  { code: 'IE', pt: 'Irlanda',           en: 'Ireland' },
+  { code: 'FR', pt: 'França',            en: 'France' },
+  { code: 'ES', pt: 'Espanha',           en: 'Spain' },
+  { code: 'DE', pt: 'Alemanha',          en: 'Germany' },
+  { code: 'IT', pt: 'Itália',            en: 'Italy' },
+  { code: 'NL', pt: 'Países Baixos',     en: 'Netherlands' },
+  { code: 'CH', pt: 'Suíça',             en: 'Switzerland' },
+  { code: 'BE', pt: 'Bélgica',           en: 'Belgium' },
+  { code: 'SE', pt: 'Suécia',            en: 'Sweden' },
+  { code: 'NO', pt: 'Noruega',           en: 'Norway' },
+  { code: 'DK', pt: 'Dinamarca',         en: 'Denmark' },
+  { code: 'AE', pt: 'Emirados Árabes Unidos', en: 'United Arab Emirates' },
+  { code: 'ZA', pt: 'África do Sul',     en: 'South Africa' },
+  { code: 'CN', pt: 'China',             en: 'China' },
+  { code: 'JP', pt: 'Japão',             en: 'Japan' },
+  { code: 'IN', pt: 'Índia',             en: 'India' },
+  { code: 'AU', pt: 'Austrália',         en: 'Australia' },
+  { code: 'OTHER', pt: 'Outro',          en: 'Other' },
+];
 
 // ── STATE — default EN ────────────────────────────────────────
 const i18nState = {
@@ -421,6 +576,39 @@ function formatDate(str) {
   const [y, m, d] = str.split('-');
   const months = t('months');
   return `${d} ${months[parseInt(m) - 1]} ${y}`;
+}
+
+// ── COUNTRY SELECT: preenche/traduz as opções mantendo a seleção ──
+function populateCountrySelect(selectId) {
+  const select = document.getElementById(selectId);
+  if (!select) return;
+
+  const lang = TRANSLATIONS[i18nState.language] ? i18nState.language : 'en';
+  const previousValue = select.value;
+
+  // Ordena por nome no idioma atual (mantém "Outro/Other" sempre no fim)
+  const sorted = [...COUNTRIES].sort((a, b) => {
+    if (a.code === 'OTHER') return 1;
+    if (b.code === 'OTHER') return -1;
+    return a[lang].localeCompare(b[lang], lang);
+  });
+
+  select.innerHTML = '';
+
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.id = 'optSignupCountryPlaceholder';
+  placeholder.textContent = t('auth_country_placeholder');
+  select.appendChild(placeholder);
+
+  sorted.forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = c.code;
+    opt.textContent = c[lang];
+    select.appendChild(opt);
+  });
+
+  if (previousValue) select.value = previousValue;
 }
 
 // ── APPLY TRANSLATIONS TO DOM ────────────────────────────────
@@ -590,6 +778,51 @@ function applyI18n() {
   setQText('.pwa-install-text span', 'pwa_install_msg');
   setText('pwaInstallDismiss','pwa_dismiss');
   setText('pwaInstallBtn','pwa_install');
+
+  // ── AUTH GATE ──
+  setText('authBrandSub', 'auth_brand_sub');
+  setText('authTabLogin', 'auth_tab_login');
+  setText('authTabSignup', 'auth_tab_signup');
+
+  setText('authLoginTitle', 'auth_login_title');
+  setText('authLoginSubtitle', 'auth_login_subtitle');
+  setText('lblLoginEmail', 'auth_label_email');
+  setText('lblLoginPassword', 'auth_label_password');
+  setText('lblRemember', 'auth_remember');
+  setText('lnkForgot', 'auth_forgot_link');
+  setText('btnLoginLabel', 'auth_btn_login');
+  const loginSwitchTextEl = document.getElementById('authLoginSwitchText');
+  if (loginSwitchTextEl) {
+    const btnEl = loginSwitchTextEl.querySelector('button');
+    loginSwitchTextEl.firstChild.textContent = t('auth_login_switch') + ' ';
+    if (btnEl) btnEl.textContent = t('auth_tab_signup');
+  }
+
+  setText('authSignupTitle', 'auth_signup_title');
+  setText('authSignupSubtitle', 'auth_signup_subtitle');
+  setText('lblSignupName', 'auth_label_name');
+  setText('lblSignupEmail', 'auth_label_email');
+  setText('lblSignupBirthdate', 'auth_label_birthdate');
+  setText('lblSignupCountry', 'auth_label_country');
+  populateCountrySelect('signupCountry');
+  setText('lblSignupPassword', 'auth_label_password');
+  setText('lblSignupPasswordConfirm', 'auth_label_password_confirm');
+  setText('btnSignupLabel', 'auth_btn_signup');
+  const signupSwitchTextEl = document.getElementById('authSignupSwitchText');
+  if (signupSwitchTextEl) {
+    const btnEl = signupSwitchTextEl.querySelector('button');
+    signupSwitchTextEl.firstChild.textContent = t('auth_signup_switch') + ' ';
+    if (btnEl) btnEl.textContent = t('auth_tab_login');
+  }
+
+  setText('authForgotTitle', 'auth_forgot_title');
+  setText('authForgotSubtitle', 'auth_forgot_subtitle');
+  setText('lblForgotEmail', 'auth_label_email');
+  setText('btnForgotLabel', 'auth_btn_forgot');
+  setText('lblBackToLogin', 'auth_back');
+  setText('btnBackToLoginFromCheck', 'auth_back_to_login');
+
+  setText('lblSignOut', 'sign_out');
 }
 
 function setLanguage(lang) {

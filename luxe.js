@@ -148,15 +148,11 @@ const ROOMS_DATA = [
   },
 ];
 
-// External demo bookings (other guests) used to simulate real per-date
-// availability. These are independent of the current guest's own
-// reservations, which live in state.stays and are merged in dynamically.
-const ROOM_BOOKINGS = {
-  // Suite Ocean View — already booked by another guest for the next few nights
-  103: [{ checkin: today(), checkout: addDays(today(), 3) }],
-  // Penthouse — booked later this month
-  104: [{ checkin: addDays(today(), 10), checkout: addDays(today(), 14) }],
-};
+// Real per-date bookings for ALL guests (not just the current one), used to
+// decide availability. Populated from the `room_occupancy` view in Supabase
+// (see refreshOccupancy()) — no personal data, just room_id + dates.
+// Keyed by the room's numeric `legacy_id` to match ROOMS_DATA[i].id.
+const ROOM_BOOKINGS = {};
 
 // SERVICE_NAMES are now resolved via t() at runtime
 function getServiceName(key) {
@@ -184,22 +180,11 @@ const state = {
   activeService: null,
   filter:       'all',
   favorites:    [],
+  currentUser:  null,
 };
 
-// Pre-seed a demo stay (only on first run — skipped if there's saved data)
-if (!localStorage.getItem('luxe-app-state')) {
-  state.stays.push({
-    id: 'demo-1',
-    roomId: 103,
-    roomName: 'Suite Ocean View',
-    roomImg: ROOMS_DATA[2].img,
-    checkin: '2026-07-10',
-    checkout: '2026-07-14',
-    nights: 4,
-    total: 1680,
-    status: 'confirmed',
-  });
-}
+// (Real stays are loaded from Supabase in loadAppData(), see below —
+// no more demo seed / localStorage bootstrap for bookings.)
 
 // ── HELPERS ──────────────────────────────────────────────────
 const el   = id => document.getElementById(id);
@@ -214,20 +199,16 @@ function fmtDate(str) {
   return formatDate(str);
 }
 
-// ── PERSISTENCE (localStorage) ─────────────────────────────────
-const STORAGE_KEY = 'luxe-app-state';
+// ── PERSISTENCE ──────────────────────────────────────────────
+// Rooms, bookings and reviews now live in Supabase (source of truth).
+// localStorage is kept only for small device-local UI prefs that have
+// no matching table (favorites, notification toggles).
+const STORAGE_KEY = 'luxe-app-prefs';
 
-function persistState() {
+function persistPrefs() {
   try {
     const payload = {
-      stays: state.stays,
       favorites: state.favorites,
-      roomOverrides: ROOMS_DATA.map(r => ({
-        id: r.id,
-        status: r.status,
-        rating: r.rating,
-        reviews: r.reviews,
-      })),
       notifEnabled:   el('notifToggle')     ? el('notifToggle').checked     : true,
       digitalCheckin: el('digitalCheckin')  ? el('digitalCheckin').checked  : true,
     };
@@ -237,24 +218,13 @@ function persistState() {
   }
 }
 
-function restoreState() {
+function restorePrefs() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const data = JSON.parse(raw);
 
-    if (Array.isArray(data.stays)) state.stays = data.stays;
     if (Array.isArray(data.favorites)) state.favorites = data.favorites;
-
-    if (Array.isArray(data.roomOverrides)) {
-      data.roomOverrides.forEach(o => {
-        const room = ROOMS_DATA.find(r => r.id === o.id);
-        if (!room) return;
-        if (o.status) room.status = o.status;
-        if (typeof o.rating === 'number') room.rating = o.rating;
-        if (Array.isArray(o.reviews)) room.reviews = o.reviews;
-      });
-    }
 
     if (typeof data.notifEnabled === 'boolean') {
       const t = el('notifToggle');
@@ -267,6 +237,105 @@ function restoreState() {
   } catch (e) {
     // Corrupted saved data — ignore and continue with in-memory defaults
   }
+}
+
+// ── SUPABASE DATA LOADING ────────────────────────────────────
+// Called by auth.js (window.RotaApp.init) once a guest session exists.
+async function loadAppData(user) {
+  state.currentUser = user;
+
+  const { data: roomRows, error: roomsErr } = await supabaseClient
+    .from('rooms')
+    .select('*')
+    .order('legacy_id', { ascending: true });
+
+  if (roomsErr) {
+    toast('Não foi possível carregar os quartos. Puxe pra atualizar.');
+    return;
+  }
+
+  ROOMS_DATA.length = 0;
+  (roomRows || []).forEach(row => {
+    ROOMS_DATA.push({
+      dbId: row.id,
+      id: row.legacy_id,
+      name: row.name,
+      type: row.type,
+      tag: row.tag,
+      price: Number(row.price),
+      capacity: row.capacity,
+      area: row.area,
+      floor: row.floor,
+      view: row.view,
+      status: row.status,
+      img: row.img,
+      imgDetail: row.img_detail,
+      desc: row.description,
+      amenities: row.amenities || [],
+      gallery: row.gallery || [],
+      rating: Number(row.rating),
+      reviews: [],
+    });
+  });
+
+  const { data: reviewRows } = await supabaseClient
+    .from('room_reviews')
+    .select('id, room_id, rating, text, created_at, profiles(full_name)')
+    .order('created_at', { ascending: false });
+
+  (reviewRows || []).forEach(r => {
+    const room = ROOMS_DATA.find(x => x.dbId === r.room_id);
+    if (!room) return;
+    room.reviews.push({
+      author: r.profiles?.full_name || t('review_author'),
+      date: (r.created_at || '').slice(0, 10),
+      rating: r.rating,
+      text: r.text,
+    });
+  });
+
+  await refreshOccupancy();
+
+  const { data: bookingRows } = await supabaseClient
+    .from('bookings')
+    .select('*')
+    .eq('guest_id', user.id)
+    .order('checkin', { ascending: false });
+
+  state.stays = (bookingRows || []).map(b => {
+    const room = ROOMS_DATA.find(x => x.dbId === b.room_id);
+    return {
+      id: b.id,
+      roomId: room ? room.id : null,
+      roomDbId: b.room_id,
+      roomName: room ? room.name : b.guest_name,
+      roomImg: room ? room.img : '',
+      checkin: b.checkin,
+      checkout: b.checkout,
+      nights: b.nights,
+      total: Number(b.total),
+      status: b.status,
+      guestName: b.guest_name,
+    };
+  });
+}
+
+// Refreshes ROOM_BOOKINGS from the room_occupancy view (all guests' confirmed
+// dates, no personal data). Note: this naturally includes the current
+// guest's own dates too, which getRoomBookings() also adds separately from
+// state.stays — harmless duplication for the overlap checks below.
+async function refreshOccupancy() {
+  const { data: occRows } = await supabaseClient
+    .from('room_occupancy')
+    .select('room_id, checkin, checkout');
+
+  Object.keys(ROOM_BOOKINGS).forEach(k => delete ROOM_BOOKINGS[k]);
+  (occRows || []).forEach(o => {
+    const room = ROOMS_DATA.find(x => x.dbId === o.room_id);
+    if (!room) return;
+    if (!ROOM_BOOKINGS[room.id]) ROOM_BOOKINGS[room.id] = [];
+    ROOM_BOOKINGS[room.id].push({ checkin: o.checkin, checkout: o.checkout });
+  });
 }
 
 function updateStaysDot() {
@@ -350,7 +419,7 @@ function toggleFavorite(roomId) {
   const idx = state.favorites.indexOf(roomId);
   if (idx === -1) state.favorites.push(roomId);
   else state.favorites.splice(idx, 1);
-  persistState();
+  persistPrefs();
   return isFavorite(roomId);
 }
 
@@ -871,7 +940,7 @@ function openBookingFlow(roomId) {
   goTo('book');
 }
 
-function completeBooking(room, ci, co, nights, total) {
+async function completeBooking(room, ci, co, nights, total) {
   const name  = el('bfName').value.trim();
   const email = el('bfEmail').value.trim();
   const phone = el('bfPhone').value.trim();
@@ -894,27 +963,54 @@ function completeBooking(room, ci, co, nights, total) {
 
   if (!valid) return;
 
+  const user = state.currentUser;
+  if (!user) { toast(t('auth_err_email_required') || 'Sessão expirada. Entre novamente.'); return; }
+
   // Availability for these dates is now derived automatically from
   // state.stays (see getRoomBookings/isRoomAvailable) — no flag to flip.
 
+  const { data, error } = await supabaseClient
+    .from('bookings')
+    .insert({
+      guest_id:    user.id,
+      room_id:     room.dbId,
+      guest_name:  name,
+      guest_email: email,
+      guest_phone: phone,
+      checkin:     ci,
+      checkout:    co,
+      nights,
+      total,
+      status: 'confirmed',
+    })
+    .select()
+    .single();
+
+  if (error) {
+    toast('Não foi possível concluir a reserva. Tente novamente.');
+    return;
+  }
+
   const newStay = {
-    id:       Date.now(),
+    id:       data.id,
     roomId:   room.id,
+    roomDbId: room.dbId,
     roomName: room.name,
     roomImg:  room.img,
-    checkin:  ci,
-    checkout: co,
-    nights,
-    total,
-    status: 'confirmed',
-    guestName: name,
+    checkin:  data.checkin,
+    checkout: data.checkout,
+    nights:   data.nights,
+    total:    Number(data.total),
+    status:   data.status,
+    guestName: data.guest_name,
   };
 
   state.stays.unshift(newStay);
+  if (!ROOM_BOOKINGS[room.id]) ROOM_BOOKINGS[room.id] = [];
+  ROOM_BOOKINGS[room.id].push({ checkin: ci, checkout: co });
 
   // Update nav dot
   updateStaysDot();
-  persistState();
 
   // Show confirm modal
   el('confirmSummaryText').textContent =
@@ -1055,18 +1151,28 @@ function renderStays() {
 
     const cancelBtn = card.querySelector('[data-cancel]');
     if (cancelBtn) {
-      cancelBtn.addEventListener('click', () => {
+      cancelBtn.addEventListener('click', async () => {
         const idx = state.stays.findIndex(s => String(s.id) === String(stay.id));
-        if (idx !== -1) {
-          // Removing the stay automatically frees those dates again
-          // (availability is derived from state.stays, not a flag)
-          state.stays.splice(idx, 1);
-          updateStaysDot();
-          persistState();
-          renderStays();
-          renderRooms();
-          toast(t('toast_cancelled'));
+        if (idx === -1) return;
+
+        const { error } = await supabaseClient
+          .from('bookings')
+          .update({ status: 'cancelled' })
+          .eq('id', stay.id);
+
+        if (error) {
+          toast('Não foi possível cancelar a reserva.');
+          return;
         }
+
+        // Removing the stay automatically frees those dates again
+        // (availability is derived from state.stays + room_occupancy)
+        state.stays.splice(idx, 1);
+        await refreshOccupancy();
+        updateStaysDot();
+        renderStays();
+        renderRooms();
+        toast(t('toast_cancelled'));
       });
     }
 
@@ -1152,7 +1258,7 @@ function setupEditDatesPreview(stay) {
   recalc(); // run on open to show current values
 }
 
-function saveEditBooking() {
+async function saveEditBooking() {
   const id  = el('editBookingId').value;
   const ci  = el('editCheckin').value;
   const co  = el('editCheckout').value;
@@ -1174,16 +1280,30 @@ function saveEditBooking() {
   const stay = state.stays[idx];
   const room = ROOMS_DATA.find(r => r.id === stay.roomId);
   const nights = Math.round((new Date(co) - new Date(ci)) / 86400000);
+  const total = room ? room.price * nights : stay.total;
+
+  const { data, error } = await supabaseClient
+    .from('bookings')
+    .update({ checkin: ci, checkout: co, nights, total })
+    .eq('id', stay.id)
+    .select()
+    .single();
+
+  if (error) {
+    toast('Não foi possível atualizar a reserva.');
+    return;
+  }
 
   state.stays[idx] = {
     ...stay,
-    checkin:  ci,
-    checkout: co,
-    nights,
-    total: room ? room.price * nights : stay.total,
+    checkin:  data.checkin,
+    checkout: data.checkout,
+    nights:   data.nights,
+    total:    Number(data.total),
   };
 
-  persistState();
+  await refreshOccupancy();
+
   renderStays();
   renderRooms();
   closeModal('modalEditBooking');
@@ -1209,7 +1329,7 @@ function updateReviewStars(val) {
   });
 }
 
-function submitReview() {
+async function submitReview() {
   const text   = el('reviewText').value.trim();
   const roomId = Number(el('reviewRoomId').value);
   if (!text) { toast(t('review_empty')); return; }
@@ -1217,20 +1337,40 @@ function submitReview() {
   const room = ROOMS_DATA.find(r => r.id === roomId);
   if (!room) return;
 
-  const newReview = {
-    author: t('review_author'),
-    date: today(),
-    rating: reviewRating,
-    text,
-  };
+  const user = state.currentUser;
+  if (!user) return;
 
-  room.reviews.unshift(newReview);
+  const relatedStay = state.stays.find(s => s.roomId === roomId);
 
-  // Recalculate average rating
+  const { data, error } = await supabaseClient
+    .from('room_reviews')
+    .insert({
+      room_id:    room.dbId,
+      guest_id:   user.id,
+      booking_id: relatedStay ? relatedStay.id : null,
+      rating:     reviewRating,
+      text,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    toast('Não foi possível enviar a avaliação.');
+    return;
+  }
+
+  room.reviews.unshift({
+    author: user.user_metadata?.full_name || t('review_author'),
+    date: (data.created_at || today()).slice(0, 10),
+    rating: data.rating,
+    text: data.text,
+  });
+
+  // Optimistic local average — the source of truth is recalculated
+  // server-side by a trigger on room_reviews, and will reflect on next load.
   const avg = room.reviews.reduce((s, r) => s + r.rating, 0) / room.reviews.length;
   room.rating = Math.round(avg * 10) / 10;
 
-  persistState();
   closeModal('modalReview');
   toast(t('review_thanks'), 'gold');
 }
@@ -1388,18 +1528,16 @@ function setupListeners() {
 
   // Profile toggles — persist on change
   const notifToggleEl = el('notifToggle');
-  if (notifToggleEl) notifToggleEl.addEventListener('change', persistState);
+  if (notifToggleEl) notifToggleEl.addEventListener('change', persistPrefs);
   const digitalCheckinEl = el('digitalCheckin');
-  if (digitalCheckinEl) digitalCheckinEl.addEventListener('change', persistState);
+  if (digitalCheckinEl) digitalCheckinEl.addEventListener('change', persistPrefs);
 }
 
 // ── INIT ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  restoreState();
+  restorePrefs();
   applyI18n();       // translate all static DOM strings on load
-  renderRooms();
   setupListeners();
-  updateStaysDot();
   setInterval(rotateHero, 5000);
 
   // Set date input constraints
@@ -1419,4 +1557,22 @@ document.addEventListener('DOMContentLoaded', () => {
     currSel.value = i18nState.currency;
     currSel.addEventListener('change', e => setCurrency(e.target.value));
   }
+
+  // Rooms/bookings depend on a logged-in guest — auth.js calls
+  // window.RotaApp.init(user) once a Supabase session is confirmed.
+  window.RotaApp = {
+    init: async (user) => {
+      await loadAppData(user);
+      renderRooms();
+      renderStays();
+      updateStaysDot();
+    },
+    reset: () => {
+      ROOMS_DATA.length = 0;
+      state.stays = [];
+      state.currentUser = null;
+      Object.keys(ROOM_BOOKINGS).forEach(k => delete ROOM_BOOKINGS[k]);
+    },
+  };
+
 });

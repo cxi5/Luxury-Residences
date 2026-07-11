@@ -26,6 +26,194 @@
 </head>
 <body>
 
+<!-- ══ AUTH BOOT LOADER (checagem de sessão Supabase) ══ -->
+<div class="auth-boot" id="authBoot">
+  <div class="auth-boot-mark">LR</div>
+</div>
+
+<!-- ══ AUTH GATE — Login / Cadastro / Recuperar senha ══ -->
+<div class="auth-gate" id="authGate" hidden>
+
+  <div class="auth-visual">
+    <img src="https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80" alt="">
+    <div class="auth-visual-overlay"></div>
+    <div class="auth-brand">
+      <div class="auth-mark">LR</div>
+      <div>
+        <div class="auth-brand-name">Luxury Residences</div>
+        <span class="auth-brand-sub" id="authBrandSub">Rio de Janeiro · 5 estrelas</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="auth-panel">
+
+    <div class="auth-switcher" id="authSwitcher">
+      <button type="button" class="auth-switch-btn active" data-auth-nav="login" id="authTabLogin">Entrar</button>
+      <button type="button" class="auth-switch-btn" data-auth-nav="signup" id="authTabSignup">Criar conta</button>
+    </div>
+
+    <!-- ── LOGIN ── -->
+    <div class="auth-view active" data-auth-view="login" id="authViewLogin">
+      <h1 class="auth-title" id="authLoginTitle">Bem-vindo de volta</h1>
+      <p class="auth-subtitle" id="authLoginSubtitle">Entre para gerenciar suas estadias e reservas.</p>
+
+      <form class="auth-form" id="formLogin" novalidate>
+        <div class="auth-field">
+          <label for="loginEmail" id="lblLoginEmail">E-mail</label>
+          <input type="email" id="loginEmail" autocomplete="email" inputmode="email" placeholder="seu@email.com">
+          <span class="auth-field-err" id="errLoginEmail"></span>
+        </div>
+
+        <div class="auth-field">
+          <label for="loginPassword" id="lblLoginPassword">Senha</label>
+          <div class="auth-input-wrap">
+            <input type="password" id="loginPassword" autocomplete="current-password" placeholder="••••••••">
+            <button type="button" class="auth-eye" data-target="loginPassword" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="auth-field-err" id="errLoginPassword"></span>
+        </div>
+
+        <div class="auth-row-between">
+          <label class="auth-check">
+            <input type="checkbox" id="loginRemember" checked>
+            <span id="lblRemember">Manter conectado</span>
+          </label>
+          <button type="button" class="auth-link" data-auth-nav="forgot" id="lnkForgot">Esqueci a senha</button>
+        </div>
+
+        <button type="submit" class="auth-btn-primary" id="btnLoginSubmit">
+          <span class="auth-btn-label" id="btnLoginLabel">Entrar</span>
+          <span class="auth-spinner" aria-hidden="true"></span>
+        </button>
+
+        <div class="auth-form-msg" id="authLoginMsg" role="alert"></div>
+      </form>
+
+      <p class="auth-switch" id="authLoginSwitchText">
+        Ainda não tem conta? <button type="button" class="auth-link auth-link-strong" data-auth-nav="signup">Criar conta</button>
+      </p>
+    </div>
+
+    <!-- ── CADASTRO ── -->
+    <div class="auth-view" data-auth-view="signup" id="authViewSignup">
+      <h1 class="auth-title" id="authSignupTitle">Criar sua conta</h1>
+      <p class="auth-subtitle" id="authSignupSubtitle">Leva menos de um minuto.</p>
+
+      <form class="auth-form" id="formSignup" novalidate>
+        <div class="auth-field">
+          <label for="signupName" id="lblSignupName">Nome completo</label>
+          <input type="text" id="signupName" autocomplete="name" placeholder="Seu nome">
+          <span class="auth-field-err" id="errSignupName"></span>
+        </div>
+
+        <div class="auth-field">
+          <label for="signupEmail" id="lblSignupEmail">E-mail</label>
+          <input type="email" id="signupEmail" autocomplete="email" inputmode="email" placeholder="seu@email.com">
+          <span class="auth-field-err" id="errSignupEmail"></span>
+        </div>
+
+        <div class="auth-field">
+          <label for="signupBirthdate" id="lblSignupBirthdate">Data de nascimento</label>
+          <input type="date" id="signupBirthdate" autocomplete="bday">
+          <span class="auth-field-err" id="errSignupBirthdate"></span>
+        </div>
+
+        <div class="auth-field">
+          <label for="signupCountry" id="lblSignupCountry">País</label>
+          <select id="signupCountry" class="auth-select" autocomplete="country">
+            <option value="" id="optSignupCountryPlaceholder">Selecione...</option>
+          </select>
+          <span class="auth-field-err" id="errSignupCountry"></span>
+        </div>
+
+        <div class="auth-field">
+          <label for="signupPassword" id="lblSignupPassword">Senha</label>
+          <div class="auth-input-wrap">
+            <input type="password" id="signupPassword" autocomplete="new-password" placeholder="Mínimo 8 caracteres">
+            <button type="button" class="auth-eye" data-target="signupPassword" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="auth-strength" id="signupStrengthWrap" style="display:none">
+            <div class="auth-strength-bar"><span id="strengthFill"></span></div>
+            <span class="auth-strength-label" id="strengthLabel"></span>
+          </div>
+          <span class="auth-field-err" id="errSignupPassword"></span>
+        </div>
+
+        <div class="auth-field">
+          <label for="signupPasswordConfirm" id="lblSignupPasswordConfirm">Confirmar senha</label>
+          <div class="auth-input-wrap">
+            <input type="password" id="signupPasswordConfirm" autocomplete="new-password" placeholder="Repita a senha">
+            <button type="button" class="auth-eye" data-target="signupPasswordConfirm" aria-label="Mostrar senha">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <span class="auth-field-err" id="errSignupPasswordConfirm"></span>
+        </div>
+
+        <label class="auth-check auth-check-terms">
+          <input type="checkbox" id="signupTerms">
+          <span id="lblTerms">Concordo com os <a href="#" class="auth-link-inline">Termos</a> e a <a href="#" class="auth-link-inline">Privacidade</a></span>
+        </label>
+        <span class="auth-field-err" id="errSignupTerms" style="margin-bottom:14px"></span>
+
+        <button type="submit" class="auth-btn-primary" id="btnSignupSubmit">
+          <span class="auth-btn-label" id="btnSignupLabel">Criar conta</span>
+          <span class="auth-spinner" aria-hidden="true"></span>
+        </button>
+
+        <div class="auth-form-msg" id="authSignupMsg" role="alert"></div>
+      </form>
+
+      <p class="auth-switch" id="authSignupSwitchText">
+        Já tem conta? <button type="button" class="auth-link auth-link-strong" data-auth-nav="login">Entrar</button>
+      </p>
+    </div>
+
+    <!-- ── RECUPERAR SENHA ── -->
+    <div class="auth-view" data-auth-view="forgot" id="authViewForgot">
+      <button type="button" class="auth-back" data-auth-nav="login">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        <span id="lblBackToLogin">Voltar</span>
+      </button>
+      <h1 class="auth-title" id="authForgotTitle">Recuperar senha</h1>
+      <p class="auth-subtitle" id="authForgotSubtitle">Enviaremos um link de redefinição para o seu e-mail.</p>
+
+      <form class="auth-form" id="formForgot" novalidate>
+        <div class="auth-field">
+          <label for="forgotEmail" id="lblForgotEmail">E-mail</label>
+          <input type="email" id="forgotEmail" autocomplete="email" inputmode="email" placeholder="seu@email.com">
+          <span class="auth-field-err" id="errForgotEmail"></span>
+        </div>
+
+        <button type="submit" class="auth-btn-primary" id="btnForgotSubmit">
+          <span class="auth-btn-label" id="btnForgotLabel">Enviar link</span>
+          <span class="auth-spinner" aria-hidden="true"></span>
+        </button>
+
+        <div class="auth-form-msg" id="authForgotMsg" role="alert"></div>
+      </form>
+    </div>
+
+    <!-- ── CONFIRME SEU E-MAIL (pós-cadastro / pós-recuperação) ── -->
+    <div class="auth-view" data-auth-view="check-email" id="authViewCheckEmail">
+      <div class="auth-success-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16v16H4z" opacity="0"/><path d="M22 6l-10 7L2 6"/><path d="M2 6h20v12H2z"/></svg>
+      </div>
+      <h1 class="auth-title" id="checkEmailTitle">Verifique seu e-mail</h1>
+      <p class="auth-subtitle" id="checkEmailText">
+        Enviamos um link para <strong id="checkEmailAddress">—</strong>. Abra sua caixa de entrada para continuar.
+      </p>
+      <button type="button" class="auth-btn-ghost" data-auth-nav="login" id="btnBackToLoginFromCheck">Voltar para o login</button>
+    </div>
+
+  </div>
+</div>
+
 <!-- APP SHELL -->
 <div class="app" id="app">
 
@@ -221,8 +409,8 @@
   <!-- ══ SCREEN: PROFILE ══ -->
   <div class="screen" id="screen-profile">
     <div class="profile-hero">
-      <div class="profile-avatar">AM</div>
-      <h2 class="profile-name">Alexandre Motta</h2>
+      <div class="profile-avatar" id="profileAvatar">–</div>
+      <h2 class="profile-name" id="profileName">—</h2>
       <p class="profile-tier">Gold Member · 4 stays</p>
     </div>
 
@@ -231,11 +419,11 @@
         <div class="ps-title">Account</div>
         <button class="ps-item">
           <span>Full name</span>
-          <span class="ps-value">Alexandre Motta</span>
+          <span class="ps-value" id="profileFullName">—</span>
         </button>
         <button class="ps-item">
           <span>Email</span>
-          <span class="ps-value">alexandre@email.com</span>
+          <span class="ps-value" id="profileEmail">—</span>
         </button>
         <button class="ps-item">
           <span>Phone</span>
@@ -302,8 +490,8 @@
           <span>Talk to concierge</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M9 18l6-6-6-6"/></svg>
         </button>
-        <button class="ps-item danger">
-          <span>Sign out</span>
+        <button class="ps-item danger" id="btnSignOut">
+          <span id="lblSignOut">Sign out</span>
         </button>
       </div>
     </div>
@@ -482,7 +670,10 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- Supabase SDK (Auth) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="i18n.js"></script>
+<script src="auth.js"></script>
 <script src="luxe.js"></script>
 
 <!-- ══ PWA: Service Worker + Install Banner ══ -->
