@@ -17,7 +17,7 @@ const ROOMS_DATA = [
     status: 'available',
     img: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80',
     imgDetail: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80',
-    desc: 'A suite mais exclusiva do hotel, com sala de estar separada, varanda privativa e vista panorâmica do oceano. Decoração contemporânea com toques de arte brasileira selecionada. Banheira de imersão e amenidades Hermès.',
+    desc: 'A suite mais exclusiva do hotel, com sala de estar separada, varanda privativa e vista panorâmica do oceano. Decoração contemporânea com toques de arte angolana selecionada. Banheira de imersão e amenidades Hermès.',
     amenities: ['Varanda Privativa', 'Banheira Imersão', 'Sala de Estar', 'Minibar Premium', 'Smart TV 75"', 'Wi-Fi 1Gbps', 'Butler Exclusivo', 'Chegada VIP'],
     rating: 4.9,
     reviews: [
@@ -191,6 +191,16 @@ const el   = id => document.getElementById(id);
 const q    = s  => document.querySelector(s);
 const qa   = s  => document.querySelectorAll(s);
 
+// Escapa valores vindos do usuário antes de injetar em innerHTML/atributos
+function escapeHtml(str) {
+  return String(str ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function fmt(v) {
   return formatCurrency(v);
 }
@@ -239,6 +249,24 @@ function restorePrefs() {
   }
 }
 
+// Escolhe, para cada quarto, os campos "ativos" (name/type/view/floor/desc/
+// amenities/gallery) conforme o idioma atual — com fallback para português
+// caso a tradução em inglês ainda não tenha sido preenchida no banco.
+// Chamada uma vez após carregar os dados, e de novo sempre que o idioma
+// muda (ver setLanguage() em i18n.js).
+function localizeRoomFields() {
+  const isEn = (typeof i18nState !== 'undefined' && i18nState.language === 'en');
+  ROOMS_DATA.forEach(room => {
+    room.name      = (isEn && room.name_en)      || room.name_pt;
+    room.type      = (isEn && room.type_en)      || room.type_pt;
+    room.view      = (isEn && room.view_en)      || room.view_pt;
+    room.floor     = (isEn && room.floor_en)     || room.floor_pt;
+    room.desc      = (isEn && room.desc_en)      || room.desc_pt;
+    room.amenities = (isEn && room.amenities_en) || room.amenities_pt;
+    room.gallery   = (isEn && room.gallery_en)   || room.gallery_pt;
+  });
+}
+
 // ── SUPABASE DATA LOADING ────────────────────────────────────
 // Called by auth.js (window.RotaApp.init) once a guest session exists.
 async function loadAppData(user) {
@@ -259,24 +287,32 @@ async function loadAppData(user) {
     ROOMS_DATA.push({
       dbId: row.id,
       id: row.legacy_id,
-      name: row.name,
-      type: row.type,
       tag: row.tag,
       price: Number(row.price),
       capacity: row.capacity,
       area: row.area,
-      floor: row.floor,
-      view: row.view,
       status: row.status,
       img: row.img,
       imgDetail: row.img_detail,
-      desc: row.description,
-      amenities: row.amenities || [],
-      gallery: row.gallery || [],
       rating: Number(row.rating),
       reviews: [],
+
+      // Conteúdo bilíngue — guardamos as duas versões e localizeRoomFields()
+      // escolhe qual delas fica "ativa" (name/type/view/floor/desc/amenities/gallery)
+      // conforme o idioma atual. Ver localizeRoomFields() logo abaixo.
+      name_pt: row.name,             name_en: row.name_en,
+      type_pt: row.type,             type_en: row.type_en,
+      view_pt: row.view,             view_en: row.view_en,
+      floor_pt: row.floor,           floor_en: row.floor_en,
+      desc_pt: row.description,      desc_en: row.description_en,
+      amenities_pt: row.amenities || [],
+      amenities_en: row.amenities_en || null,
+      gallery_pt: row.gallery || [],
+      gallery_en: row.gallery_en || null,
     });
   });
+
+  localizeRoomFields();
 
   const { data: reviewRows } = await supabaseClient
     .from('room_reviews')
@@ -851,7 +887,7 @@ function setupLightbox() {
 }
 
 // ── BOOKING FLOW ─────────────────────────────────────────────
-function openBookingFlow(roomId) {
+function openBookingFlow(roomId, prefill) {
   const room = ROOMS_DATA.find(r => r.id === roomId);
   if (!room) return;
 
@@ -868,6 +904,14 @@ function openBookingFlow(roomId) {
   const subtotal = nights * room.price;
   const taxes    = Math.round(subtotal * 0.12);
   const total    = subtotal + taxes;
+
+  // Pré-preenche os dados do hóspede com o usuário logado (Supabase Auth),
+  // ou com o que já foi digitado antes (ex: ao voltar da tela de pagamento).
+  const meta = (state.currentUser && state.currentUser.user_metadata) || {};
+  const guestName  = (prefill && prefill.name)  || meta.full_name || '';
+  const guestEmail = (prefill && prefill.email) || (state.currentUser && state.currentUser.email) || '';
+  const guestPhone = (prefill && prefill.phone) || meta.phone || '';
+  const guestNotes = (prefill && prefill.notes) || '';
 
   el('bookFlow').innerHTML = `
     <div class="booking-card">
@@ -911,22 +955,22 @@ function openBookingFlow(roomId) {
       <div class="book-section-title">${t('bf_guest_data')}</div>
       <div class="field-dark">
         <label>${t("bf_name_lbl")}</label>
-        <input type="text" id="bfName" placeholder=t('bf_name_ph') value="Alexandre Motta">
+        <input type="text" id="bfName" placeholder=t('bf_name_ph') value="${escapeHtml(guestName)}">
         <span class="field-error-msg" id="bfNameErr">${t('bf_err_name')}</span>
       </div>
       <div class="field-dark">
         <label>${t("bf_email_lbl")}</label>
-        <input type="email" id="bfEmail" placeholder=t('bf_email_ph') value="alexandre@email.com">
+        <input type="email" id="bfEmail" placeholder=t('bf_email_ph') value="${escapeHtml(guestEmail)}">
         <span class="field-error-msg" id="bfEmailErr">${t('bf_err_email')}</span>
       </div>
       <div class="field-dark">
         <label>${t("bf_phone_lbl")}</label>
-        <input type="tel" id="bfPhone" placeholder=t('bf_phone_ph') value="+55 21 99999-0000">
+        <input type="tel" id="bfPhone" placeholder=t('bf_phone_ph') value="${escapeHtml(guestPhone)}">
         <span class="field-error-msg" id="bfPhoneErr">${t('bf_err_phone')}</span>
       </div>
       <div class="field-dark">
         <label>${t("bf_notes_lbl")}</label>
-        <textarea id="bfNotes" rows="2" placeholder=t('bf_notes_ph')></textarea>
+        <textarea id="bfNotes" rows="2" placeholder=t('bf_notes_ph')>${escapeHtml(guestNotes)}</textarea>
       </div>
     </div>
 
@@ -934,37 +978,202 @@ function openBookingFlow(roomId) {
     <button class="btn-ghost-sm" id="btnCancelBook">${t('bf_back')}</button>
   `;
 
-  el('btnCompleteBooking').addEventListener('click', () => completeBooking(room, ci, co, nights, total));
+  el('btnCompleteBooking').addEventListener('click', () => {
+    const name  = el('bfName').value.trim();
+    const email = el('bfEmail').value.trim();
+    const phone = el('bfPhone').value.trim();
+    const notes = el('bfNotes').value.trim();
+    let valid = true;
+
+    [['bfName','bfNameErr', !name],
+     ['bfEmail','bfEmailErr', !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)],
+     ['bfPhone','bfPhoneErr', !phone]].forEach(([inpId, errId, fail]) => {
+      const inp = el(inpId);
+      const err = el(errId);
+      if (fail) {
+        inp.classList.add('err');
+        err.classList.add('show');
+        valid = false;
+      } else {
+        inp.classList.remove('err');
+        err.classList.remove('show');
+      }
+    });
+
+    if (!valid) return;
+
+    if (!state.currentUser) { toast(t('auth_err_email_required') || 'Sessão expirada. Entre novamente.'); return; }
+
+    renderPaymentStep(room, ci, co, nights, total, { name, email, phone, notes });
+  });
   el('btnCancelBook').addEventListener('click', () => goBack('discover'));
 
   goTo('book');
 }
 
-async function completeBooking(room, ci, co, nights, total) {
-  const name  = el('bfName').value.trim();
-  const email = el('bfEmail').value.trim();
-  const phone = el('bfPhone').value.trim();
-  let valid = true;
+// ── PAYMENT STEP ──────────────────────────────────────────────
+const BANK_ACCOUNTS = {
+  bai:      { label: 'BAI — Banco Angolano de Investimentos', iban: 'AO06 0040 0000 8817 3629 1014 7' },
+  bfa:      { label: 'BFA — Banco de Fomento Angola',          iban: 'AO06 0006 0000 4127 8853 1017 3' },
+  atlantico:{ label: 'Banco Atlântico',                        iban: 'AO06 0055 0000 3392 6610 1013 9' },
+  bpc:      { label: 'BPC — Banco de Poupança e Crédito',      iban: 'AO06 0057 0000 7724 4415 1019 5' },
+  standard: { label: 'Standard Bank Angola',                   iban: 'AO06 0025 0000 5561 0027 1011 2' },
+};
 
-  [['bfName','bfNameErr', !name],
-   ['bfEmail','bfEmailErr', !email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)],
-   ['bfPhone','bfPhoneErr', !phone]].forEach(([inpId, errId, fail]) => {
-    const inp = el(inpId);
-    const err = el(errId);
-    if (fail) {
-      inp.classList.add('err');
-      err.classList.add('show');
-      valid = false;
-    } else {
-      inp.classList.remove('err');
-      err.classList.remove('show');
-    }
+function renderPaymentStep(room, ci, co, nights, total, guest) {
+  el('bookFlow').innerHTML = `
+    <div class="booking-card">
+      <img class="bc-img" src="${room.img}" alt="${room.name}">
+      <div class="bc-info">
+        <div class="bc-name">${room.name}</div>
+        <div class="bc-price">${fmt(total)}</div>
+      </div>
+      <div class="bc-dates">
+        <div class="bc-date-item">
+          <span class="bc-date-label">Check-in</span>
+          <span class="bc-date-val">${fmtDate(ci)}</span>
+        </div>
+        <div class="bc-date-item">
+          <span class="bc-date-label">Check-out</span>
+          <span class="bc-date-val">${fmtDate(co)}</span>
+        </div>
+        <div class="bc-date-item">
+          <span class="bc-date-label">${t('night_plural')}</span>
+          <span class="bc-date-val">${nights}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="pay-tabs">
+      <button class="pay-tab active" id="payTabTransfer" data-pay="transfer">${t('pay_bank_transfer')}</button>
+      <button class="pay-tab" id="payTabExpress" data-pay="express">${t('pay_express')}</button>
+    </div>
+
+    <div id="payPanel"></div>
+
+    <button class="btn-ghost-sm" id="btnBackToGuest">${t('bf_back')}</button>
+  `;
+
+  let method = 'transfer';
+  renderPayPanel(method, room, ci, co, nights, total, guest);
+
+  qa('.pay-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      qa('.pay-tab').forEach(b => b.classList.remove('active'));
+      tab.classList.add('active');
+      method = tab.dataset.pay;
+      renderPayPanel(method, room, ci, co, nights, total, guest);
+    });
   });
 
-  if (!valid) return;
+  el('btnBackToGuest').addEventListener('click', () => openBookingFlow(room.id, guest));
+
+  goTo('book');
+}
+
+function renderPayPanel(method, room, ci, co, nights, total, guest) {
+  const panel = el('payPanel');
+
+  if (method === 'transfer') {
+    panel.innerHTML = `
+      <div class="book-section-title">${t('pay_choose_bank')}</div>
+      <div class="field-dark">
+        <label>${t('pay_bank_lbl')}</label>
+        <select id="payBankSelect">
+          <option value="">${t('select')}</option>
+          ${Object.entries(BANK_ACCOUNTS).map(([key, b]) => `<option value="${key}">${b.label}</option>`).join('')}
+        </select>
+      </div>
+      <div id="payBankDetails"></div>
+      <button class="btn-gold" id="btnConfirmTransfer" disabled>${t('pay_confirm_transfer')}</button>
+    `;
+
+    const select = el('payBankSelect');
+    const details = el('payBankDetails');
+    const btn = el('btnConfirmTransfer');
+
+    select.addEventListener('change', () => {
+      const bank = BANK_ACCOUNTS[select.value];
+      if (!bank) {
+        details.innerHTML = '';
+        btn.disabled = true;
+        return;
+      }
+      details.innerHTML = `
+        <div class="price-breakdown pay-bank-details">
+          <div class="pb-row"><span>${t('pay_bank_name')}</span><span>${bank.label}</span></div>
+          <div class="pb-row"><span>${t('pay_iban')}</span><span class="pay-iban">${bank.iban}</span></div>
+          <div class="pb-row total"><span>${t('pay_amount')}</span><span>${fmt(total)}</span></div>
+        </div>
+        <p class="pay-hint">${t('pay_transfer_hint')}</p>
+      `;
+      btn.disabled = false;
+    });
+
+    btn.addEventListener('click', () => finalizePayment(room, ci, co, nights, total, guest, btn));
+
+  } else {
+    const seed = `${room.id}-${ci}-${co}-${total}`;
+    panel.innerHTML = `
+      <div class="book-section-title">${t('pay_express_title')}</div>
+      <div class="pay-qr-wrap">
+        ${generateFakeQR(seed)}
+        <div class="pay-qr-amount">${fmt(total)}</div>
+        <p class="pay-hint">${t('pay_express_hint')}</p>
+      </div>
+      <button class="btn-gold" id="btnConfirmExpress">${t('pay_already_paid')}</button>
+    `;
+
+    el('btnConfirmExpress').addEventListener('click', () => finalizePayment(room, ci, co, nights, total, guest, el('btnConfirmExpress')));
+  }
+}
+
+// Deterministic pseudo-QR pattern (visual only, not scannable) so the demo
+// never depends on an external QR-generation API.
+function generateFakeQR(seed) {
+  let h = 0;
+  for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
+  const rand = () => { h = (h * 1103515245 + 12345) >>> 0; return (h >>> 8) / 16777216; };
+
+  const size = 17;
+  let cells = '';
+  const isFinder = (x, y) => (x < 5 && y < 5) || (x > size - 6 && y < 5) || (x < 5 && y > size - 6);
+
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      let on;
+      if (isFinder(x, y)) {
+        const lx = x < 5 ? x : x > size - 6 ? x - (size - 7) : x;
+        const ly = y;
+        on = lx === 0 || lx === 6 || ly === 0 || ly === 6 || (lx >= 2 && lx <= 4 && ly >= 2 && ly <= 4);
+      } else {
+        on = rand() > 0.55;
+      }
+      if (on) cells += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
+    }
+  }
+  return `<svg class="pay-qr" viewBox="0 0 ${size} ${size}" fill="currentColor">${cells}</svg>`;
+}
+
+async function finalizePayment(room, ci, co, nights, total, guest, triggerBtn) {
+  triggerBtn.disabled = true;
+  const originalText = triggerBtn.textContent;
+  triggerBtn.innerHTML = `<span class="btn-spinner"></span> ${t('pay_processing')}`;
+
+  await new Promise(res => setTimeout(res, 1200));
+
+  const ok = await completeBooking(room, ci, co, nights, total, guest);
+  if (!ok) {
+    triggerBtn.disabled = false;
+    triggerBtn.textContent = originalText;
+  }
+}
+
+async function completeBooking(room, ci, co, nights, total, guest) {
+  const { name, email, phone } = guest;
 
   const user = state.currentUser;
-  if (!user) { toast(t('auth_err_email_required') || 'Sessão expirada. Entre novamente.'); return; }
+  if (!user) { toast(t('auth_err_email_required') || 'Sessão expirada. Entre novamente.'); return false; }
 
   // Availability for these dates is now derived automatically from
   // state.stays (see getRoomBookings/isRoomAvailable) — no flag to flip.
@@ -988,7 +1197,7 @@ async function completeBooking(room, ci, co, nights, total) {
 
   if (error) {
     toast('Não foi possível concluir a reserva. Tente novamente.');
-    return;
+    return false;
   }
 
   const newStay = {
@@ -1017,6 +1226,7 @@ async function completeBooking(room, ci, co, nights, total) {
     `${room.name} · ${fmtDate(ci)} — ${fmtDate(co)} · ${nights} ${nights > 1 ? t('night_plural') : t('night_singular')} · ${fmt(total)}`;
 
   openModal('modalConfirm');
+  return true;
 }
 
 // ── DATES MODAL ───────────────────────────────────────────────
@@ -1110,7 +1320,10 @@ function renderStays() {
     container.innerHTML = `<div class="empty-dark">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
       <p>${state.staysTab === 'upcoming' ? t('no_upcoming') : t('no_history')}</p>
+      ${state.staysTab === 'upcoming' ? `<button class="btn-gold-outline" id="btnEmptyExplore">${t('empty_explore_btn')}</button>` : ''}
     </div>`;
+    const exploreBtn = el('btnEmptyExplore');
+    if (exploreBtn) exploreBtn.addEventListener('click', () => goTo('discover'));
     return;
   }
 

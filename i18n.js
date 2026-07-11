@@ -12,7 +12,7 @@ const TRANSLATIONS = {
     hero_eyebrow:   'Bem-vindo de volta',
     hero_title1:    'Onde cada',
     hero_title2:    'detalhe importa',
-    hero_sub:       'Rio de Janeiro · 5 estrelas',
+    hero_sub:       'Luanda · 5 estrelas',
 
     // search bar
     checkin:        'Check-in',
@@ -76,7 +76,7 @@ const TRANSLATIONS = {
     bf_email_lbl:   'Email',
     bf_email_ph:    'seu@email.com',
     bf_phone_lbl:   'Telefone',
-    bf_phone_ph:    '+55 (00) 00000-0000',
+    bf_phone_ph:    '+244 900 000 000',
     bf_notes_lbl:   'Pedidos especiais (opcional)',
     bf_notes_ph:    'Aniversário, restrições alimentares, chegada antecipada...',
     bf_confirm_btn: 'Confirmar reserva',
@@ -87,6 +87,21 @@ const TRANSLATIONS = {
     bf_err_name:    'Informe o nome completo.',
     bf_err_email:   'Informe um email válido.',
     bf_err_phone:   'Informe o telefone.',
+
+    // payment step
+    pay_bank_transfer:   'Transferência bancária',
+    pay_express:         'Express',
+    pay_choose_bank:     'Escolha o banco',
+    pay_bank_lbl:        'Banco',
+    pay_bank_name:       'Banco',
+    pay_iban:            'IBAN',
+    pay_amount:          'Valor a transferir',
+    pay_confirm_transfer:'Confirmar transferência realizada',
+    pay_transfer_hint:   'Faça a transferência para o IBAN acima com o valor exato e confirme abaixo.',
+    pay_express_title:   'Pagamento Express',
+    pay_express_hint:    'Escaneie o código para finalizar o pagamento. O valor é fixo e não pode ser alterado.',
+    pay_already_paid:    'Já paguei',
+    pay_processing:      'Processando...',
 
     // dates modal
     dates_title:    'Selecionar datas',
@@ -123,6 +138,7 @@ const TRANSLATIONS = {
     stay_review:    'Avaliar',
     no_upcoming:    'Nenhuma estadia próxima. Reserve agora.',
     no_history:     'Nenhum histórico disponível.',
+    empty_explore_btn: 'Explorar quartos',
     toast_cancelled:'Reserva cancelada',
     toast_updated:  'Reserva atualizada ✓',
 
@@ -205,7 +221,7 @@ const TRANSLATIONS = {
     pwa_install:        'Instalar',
 
     // ── AUTH ──
-    auth_brand_sub:         'Rio de Janeiro · 5 estrelas',
+    auth_brand_sub:         'Luanda · 5 estrelas',
     auth_tab_login:         'Entrar',
     auth_tab_signup:        'Criar conta',
 
@@ -238,11 +254,13 @@ const TRANSLATIONS = {
     auth_back_to_login:      'Voltar para o login',
 
     auth_label_birthdate:    'Data de nascimento',
+    auth_label_phone:        'Telefone',
     auth_label_country:      'País',
     auth_country_placeholder: 'Selecione...',
 
     auth_err_email_required:  'Informe seu e-mail.',
     auth_err_email_invalid:   'Digite um e-mail válido.',
+    auth_err_phone_required:  'Informe seu telefone.',
     auth_err_password_required: 'Informe sua senha.',
     auth_err_password_short:  'A senha precisa ter no mínimo 8 caracteres.',
     auth_err_password_mismatch: 'As senhas não coincidem.',
@@ -270,7 +288,7 @@ const TRANSLATIONS = {
     hero_eyebrow:   'Welcome back',
     hero_title1:    'Where every',
     hero_title2:    'detail matters',
-    hero_sub:       'Rio de Janeiro · 5 stars',
+    hero_sub:       'Luanda · 5 stars',
 
     checkin:        'Check-in',
     checkout:       'Check-out',
@@ -327,7 +345,7 @@ const TRANSLATIONS = {
     bf_email_lbl:   'Email',
     bf_email_ph:    'your@email.com',
     bf_phone_lbl:   'Phone',
-    bf_phone_ph:    '+1 (000) 000-0000',
+    bf_phone_ph:    '+244 900 000 000',
     bf_notes_lbl:   'Special requests (optional)',
     bf_notes_ph:    'Anniversary, dietary restrictions, early arrival...',
     bf_confirm_btn: 'Confirm booking',
@@ -338,6 +356,21 @@ const TRANSLATIONS = {
     bf_err_name:    'Please enter your full name.',
     bf_err_email:   'Please enter a valid email.',
     bf_err_phone:   'Please enter your phone number.',
+
+    // payment step
+    pay_bank_transfer:   'Bank transfer',
+    pay_express:         'Express',
+    pay_choose_bank:     'Choose your bank',
+    pay_bank_lbl:        'Bank',
+    pay_bank_name:       'Bank',
+    pay_iban:            'IBAN',
+    pay_amount:          'Amount to transfer',
+    pay_confirm_transfer:'Confirm transfer made',
+    pay_transfer_hint:   'Transfer the exact amount to the IBAN above, then confirm below.',
+    pay_express_title:   'Express payment',
+    pay_express_hint:    'Scan the code to finish the payment. The amount is fixed and cannot be changed.',
+    pay_already_paid:    'I already paid',
+    pay_processing:      'Processing...',
 
     dates_title:    'Select dates',
     dates_checkin:  'Check-in',
@@ -370,6 +403,7 @@ const TRANSLATIONS = {
     stay_review:    'Review',
     no_upcoming:    'No upcoming stays. Book now.',
     no_history:     'No history available.',
+    empty_explore_btn: 'Explore rooms',
     toast_cancelled:'Booking cancelled',
     toast_updated:  'Booking updated ✓',
 
@@ -445,7 +479,7 @@ const TRANSLATIONS = {
     pwa_install:        'Install',
 
     // ── AUTH ──
-    auth_brand_sub:         'Rio de Janeiro · 5 stars',
+    auth_brand_sub:         'Luanda · 5 stars',
     auth_tab_login:         'Sign in',
     auth_tab_signup:        'Create account',
 
@@ -478,11 +512,13 @@ const TRANSLATIONS = {
     auth_back_to_login:      'Back to sign in',
 
     auth_label_birthdate:    'Date of birth',
+    auth_label_phone:        'Phone',
     auth_label_country:      'Country',
     auth_country_placeholder: 'Select...',
 
     auth_err_email_required:  'Please enter your email.',
     auth_err_email_invalid:   'Please enter a valid email.',
+    auth_err_phone_required:  'Please enter your phone number.',
     auth_err_password_required: 'Please enter your password.',
     auth_err_password_short:  'Password must be at least 8 characters.',
     auth_err_password_mismatch: 'Passwords do not match.',
@@ -552,7 +588,7 @@ const COUNTRIES = [
 
 // ── STATE — default EN ────────────────────────────────────────
 const i18nState = {
-  language: localStorage.getItem('app-lang') || 'en',
+  language: localStorage.getItem('app-lang') || 'pt',
   currency: localStorage.getItem('app-currency') || 'KZ',
 };
 
@@ -614,6 +650,9 @@ function populateCountrySelect(selectId) {
 // ── APPLY TRANSLATIONS TO DOM ────────────────────────────────
 function applyI18n() {
   const lang = i18nState.language;
+
+  // Mantém o atributo lang do documento em sincronia (acessibilidade / SEO)
+  document.documentElement.lang = lang === 'pt' ? 'pt-AO' : 'en';
 
   // Helper: set text if element exists
   const setText = (id, key) => { const e = document.getElementById(id); if (e) e.textContent = t(key); };
@@ -803,6 +842,7 @@ function applyI18n() {
   setText('lblSignupName', 'auth_label_name');
   setText('lblSignupEmail', 'auth_label_email');
   setText('lblSignupBirthdate', 'auth_label_birthdate');
+  setText('lblSignupPhone', 'auth_label_phone');
   setText('lblSignupCountry', 'auth_label_country');
   populateCountrySelect('signupCountry');
   setText('lblSignupPassword', 'auth_label_password');
@@ -830,6 +870,7 @@ function setLanguage(lang) {
   i18nState.language = lang;
   localStorage.setItem('app-lang', lang);
   applyI18n();
+  if (typeof localizeRoomFields === 'function') localizeRoomFields();
   if (typeof renderRooms === 'function') renderRooms();
   if (typeof renderStays === 'function') renderStays();
 }

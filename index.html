@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-AO">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -14,11 +14,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="LuxeStay">
-<link rel="apple-touch-icon" href="https://placehold.co/180x180/0a0a0a/C9A96E?text=LR">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-startup-image" href="https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=390&q=80">
 
 <!-- Descrição para SEO / share -->
-<meta name="description" content="Reservas e experiências premium no Rio de Janeiro. Hotel 5 estrelas.">
+<meta name="description" content="Reservas e experiências premium em Luanda. Hotel 5 estrelas.">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -41,7 +42,7 @@
       <div class="auth-mark">LR</div>
       <div>
         <div class="auth-brand-name">Luxury Residences</div>
-        <span class="auth-brand-sub" id="authBrandSub">Rio de Janeiro · 5 estrelas</span>
+        <span class="auth-brand-sub" id="authBrandSub">Luanda · 5 estrelas</span>
       </div>
     </div>
   </div>
@@ -113,6 +114,12 @@
           <label for="signupEmail" id="lblSignupEmail">E-mail</label>
           <input type="email" id="signupEmail" autocomplete="email" inputmode="email" placeholder="seu@email.com">
           <span class="auth-field-err" id="errSignupEmail"></span>
+        </div>
+
+        <div class="auth-field">
+          <label for="signupPhone" id="lblSignupPhone">Telefone</label>
+          <input type="tel" id="signupPhone" autocomplete="tel" inputmode="tel" placeholder="+244 900 000 000">
+          <span class="auth-field-err" id="errSignupPhone"></span>
         </div>
 
         <div class="auth-field">
@@ -229,7 +236,7 @@
       <div class="hero-content">
         <div class="hero-eyebrow">Welcome back</div>
         <h1 class="hero-title">Where every<br><em>detail matters</em></h1>
-        <p class="hero-sub">Rio de Janeiro · 5 stars</p>
+        <p class="hero-sub">Luanda · 5 stars</p>
       </div>
 
       <!-- Search float card -->
@@ -427,7 +434,7 @@
         </button>
         <button class="ps-item">
           <span>Phone</span>
-          <span class="ps-value">+55 21 99999-0000</span>
+          <span class="ps-value" id="profilePhone">—</span>
         </button>
       </div>
 

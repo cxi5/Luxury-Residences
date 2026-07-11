@@ -294,6 +294,12 @@ function validateSignupForm() {
     ok = false;
   }
 
+  const phone = aEl('signupPhone').value.trim();
+  if (!phone) {
+    setFieldError('signupPhone', 'errSignupPhone', t2('auth_err_phone_required'));
+    ok = false;
+  }
+
   if (!birthdate) {
     setFieldError('signupBirthdate', 'errSignupBirthdate', t2('auth_err_birthdate_required'));
     ok = false;
@@ -352,6 +358,7 @@ async function handleSignupSubmit(e) {
 
   const name      = aEl('signupName').value.trim();
   const email     = aEl('signupEmail').value.trim();
+  const phone     = aEl('signupPhone').value.trim();
   const birthdate = aEl('signupBirthdate').value;
   const country   = aEl('signupCountry').value;
   const password  = aEl('signupPassword').value;
@@ -359,7 +366,7 @@ async function handleSignupSubmit(e) {
   const { data, error } = await supabaseClient.auth.signUp({
     email,
     password,
-    options: { data: { full_name: name, birthdate, country } },
+    options: { data: { full_name: name, phone, birthdate, country } },
   });
 
   setButtonLoading('btnSignupSubmit', false);
@@ -449,19 +456,23 @@ function initSignOut() {
 // ── ENTRAR / SAIR DO APP CONFORME SESSÃO ─────────────────────
 function populateProfile(user) {
   if (!user) return;
-  const name  = (user.user_metadata && user.user_metadata.full_name) || user.email.split('@')[0];
+  const meta = user.user_metadata || {};
+  const name  = meta.full_name || user.email.split('@')[0];
   const email = user.email || '—';
+  const phone = meta.phone || '—';
   const initials = name.trim().split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase();
 
   const avatarEl = aEl('profileAvatar');
   const nameEl   = aEl('profileName');
   const fullNameEl = aEl('profileFullName');
   const emailEl = aEl('profileEmail');
+  const phoneEl = aEl('profilePhone');
 
   if (avatarEl) avatarEl.textContent = initials || '—';
   if (nameEl) nameEl.textContent = name;
   if (fullNameEl) fullNameEl.textContent = name;
   if (emailEl) emailEl.textContent = email;
+  if (phoneEl) phoneEl.textContent = phone;
 }
 
 function enterApp(user) {
@@ -510,6 +521,7 @@ function t2(key) {
 const AUTH_FALLBACK_STRINGS = {
   auth_err_email_required: 'Informe seu e-mail.',
   auth_err_email_invalid: 'Digite um e-mail válido.',
+  auth_err_phone_required: 'Informe seu telefone.',
   auth_err_password_required: 'Informe sua senha.',
   auth_err_password_short: 'A senha precisa ter no mínimo 8 caracteres.',
   auth_err_password_mismatch: 'As senhas não coincidem.',
@@ -547,6 +559,7 @@ document.addEventListener('DOMContentLoaded', () => {
   [
     ['loginEmail', 'errLoginEmail'], ['loginPassword', 'errLoginPassword'],
     ['signupName', 'errSignupName'], ['signupEmail', 'errSignupEmail'],
+    ['signupPhone', 'errSignupPhone'],
     ['signupBirthdate', 'errSignupBirthdate'],
     ['signupPassword', 'errSignupPassword'], ['signupPasswordConfirm', 'errSignupPasswordConfirm'],
     ['forgotEmail', 'errForgotEmail'],

@@ -1,23 +1,23 @@
 {
   "name": "Luxury Residences",
   "short_name": "LuxeStay",
-  "description": "Reservas e experiências premium — Rio de Janeiro",
+  "description": "Reservas e experiências premium — Luanda",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0a0a0a",
   "theme_color": "#C9A96E",
-  "lang": "pt-BR",
+  "lang": "pt-AO",
   "categories": ["travel", "lifestyle"],
   "icons": [
     {
-      "src": "https://placehold.co/192x192/0a0a0a/C9A96E?text=LR&font=playfairdisplay",
+      "src": "icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "https://placehold.co/512x512/0a0a0a/C9A96E?text=LR&font=playfairdisplay",
+      "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -40,7 +40,7 @@
       "url": "./index.html#stays",
       "icons": [
         {
-          "src": "https://placehold.co/96x96/0a0a0a/C9A96E?text=★",
+          "src": "icon-96.png",
           "sizes": "96x96"
         }
       ]
