@@ -308,7 +308,7 @@
   <!-- ══ SCREEN: ROOMS (detail) ══ -->
   <div class="screen" id="screen-rooms">
     <div class="subpage-header">
-      <button class="back-btn" data-back="discover">
+      <button class="back-btn" data-back="discover" aria-label="Voltar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
       </button>
       <span id="roomDetailTitle">Suite Presidencial</span>
@@ -319,7 +319,7 @@
   <!-- ══ SCREEN: BOOK ══ -->
   <div class="screen" id="screen-book">
     <div class="subpage-header">
-      <button class="back-btn" data-back="discover">
+      <button class="back-btn" data-back="discover" aria-label="Voltar">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
       </button>
       <span>Complete booking</span>
@@ -530,10 +530,10 @@
 <!-- ══ MODALS ══ -->
 
 <!-- Date picker modal -->
-<div class="modal-backdrop" id="modalDates">
+<div class="modal-backdrop" id="modalDates" role="dialog" aria-modal="true" aria-labelledby="modalDatesTitle">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <h3 class="modal-title">Select dates</h3>
+    <h3 class="modal-title" id="modalDatesTitle">Select dates</h3>
     <div class="date-inputs">
       <div class="field-dark">
         <label>Check-in</label>
@@ -553,10 +553,10 @@
 </div>
 
 <!-- Guests modal -->
-<div class="modal-backdrop" id="modalGuests">
+<div class="modal-backdrop" id="modalGuests" role="dialog" aria-modal="true" aria-labelledby="modalGuestsTitle">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <h3 class="modal-title">Guests</h3>
+    <h3 class="modal-title" id="modalGuestsTitle">Guests</h3>
     <div class="guest-counter">
       <div class="counter-row">
         <div>
@@ -564,9 +564,9 @@
           <div class="counter-sub">13+ years</div>
         </div>
         <div class="counter-ctrl">
-          <button class="counter-btn" data-type="adults" data-op="minus">–</button>
+          <button class="counter-btn" data-type="adults" data-op="minus" aria-label="Diminuir adultos">–</button>
           <span class="counter-val" id="cntAdults">1</span>
-          <button class="counter-btn" data-type="adults" data-op="plus">+</button>
+          <button class="counter-btn" data-type="adults" data-op="plus" aria-label="Aumentar adultos">+</button>
         </div>
       </div>
       <div class="counter-row">
@@ -575,9 +575,9 @@
           <div class="counter-sub">Up to 12 years</div>
         </div>
         <div class="counter-ctrl">
-          <button class="counter-btn" data-type="children" data-op="minus">–</button>
+          <button class="counter-btn" data-type="children" data-op="minus" aria-label="Diminuir crianças">–</button>
           <span class="counter-val" id="cntChildren">0</span>
-          <button class="counter-btn" data-type="children" data-op="plus">+</button>
+          <button class="counter-btn" data-type="children" data-op="plus" aria-label="Aumentar crianças">+</button>
         </div>
       </div>
     </div>
@@ -587,23 +587,23 @@
 </div>
 
 <!-- Confirmation modal -->
-<div class="modal-backdrop" id="modalConfirm">
+<div class="modal-backdrop" id="modalConfirm" role="dialog" aria-modal="true" aria-labelledby="modalConfirmTitle">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
     <div class="confirm-check">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
     </div>
-    <h3 class="modal-title" style="text-align:center">Booking confirmed</h3>
+    <h3 class="modal-title" id="modalConfirmTitle" style="text-align:center">Booking confirmed</h3>
     <p class="modal-sub" id="confirmSummaryText"></p>
     <button class="btn-gold" id="btnGoToStays">View my stays</button>
   </div>
 </div>
 
 <!-- Edit booking modal -->
-<div class="modal-backdrop" id="modalEditBooking">
+<div class="modal-backdrop" id="modalEditBooking" role="dialog" aria-modal="true" aria-labelledby="modalEditBookingTitle">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <h3 class="modal-title">Edit booking</h3>
+    <h3 class="modal-title" id="modalEditBookingTitle">Edit booking</h3>
     <p class="modal-sub" id="editBookingRoomName"></p>
     <input type="hidden" id="editBookingId">
 
@@ -638,18 +638,18 @@
 </div>
 
 <!-- Review modal -->
-<div class="modal-backdrop" id="modalReview">
+<div class="modal-backdrop" id="modalReview" role="dialog" aria-modal="true" aria-labelledby="modalReviewTitle">
   <div class="modal-sheet">
     <div class="modal-handle"></div>
-    <h3 class="modal-title">Rate your stay</h3>
+    <h3 class="modal-title" id="modalReviewTitle">Rate your stay</h3>
     <p class="modal-sub" id="reviewRoomName"></p>
     <input type="hidden" id="reviewRoomId">
     <div class="review-star-picker">
-      <button class="review-star-btn active" data-val="1">★</button>
-      <button class="review-star-btn active" data-val="2">★</button>
-      <button class="review-star-btn active" data-val="3">★</button>
-      <button class="review-star-btn active" data-val="4">★</button>
-      <button class="review-star-btn active" data-val="5">★</button>
+      <button class="review-star-btn active" data-val="1" aria-label="1 estrela">★</button>
+      <button class="review-star-btn active" data-val="2" aria-label="2 estrelas">★</button>
+      <button class="review-star-btn active" data-val="3" aria-label="3 estrelas">★</button>
+      <button class="review-star-btn active" data-val="4" aria-label="4 estrelas">★</button>
+      <button class="review-star-btn active" data-val="5" aria-label="5 estrelas">★</button>
     </div>
     <div class="field-dark">
       <label>Your review</label>
@@ -664,13 +664,13 @@
 <div class="lightbox-overlay" id="lightboxOverlay">
   <div class="lightbox-top">
     <span class="lightbox-counter" id="lightboxCounter">1 / 1</span>
-    <button class="lightbox-close" id="lightboxClose">
+    <button class="lightbox-close" id="lightboxClose" aria-label="Fechar">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
   </div>
   <div class="lightbox-track" id="lightboxTrack"></div>
-  <button class="gallery-arrow lightbox-arrow lightbox-prev" id="lightboxPrev">&#8249;</button>
-  <button class="gallery-arrow lightbox-arrow lightbox-next" id="lightboxNext">&#8250;</button>
+  <button class="gallery-arrow lightbox-arrow lightbox-prev" id="lightboxPrev" aria-label="Foto anterior">&#8249;</button>
+  <button class="gallery-arrow lightbox-arrow lightbox-next" id="lightboxNext" aria-label="Próxima foto">&#8250;</button>
   <div class="gallery-dots lightbox-dots" id="lightboxDots"></div>
 </div>
 

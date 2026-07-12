@@ -657,10 +657,10 @@ function openRoomDetail(roomId) {
         `).join('')}
       </div>
       ${gallery.length > 1 ? `
-        <button class="gallery-arrow gallery-prev" id="galleryPrev">&#8249;</button>
-        <button class="gallery-arrow gallery-next" id="galleryNext">&#8250;</button>
+        <button class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="Foto anterior">&#8249;</button>
+        <button class="gallery-arrow gallery-next" id="galleryNext" aria-label="Próxima foto">&#8250;</button>
         <div class="gallery-dots" id="galleryDots">
-          ${gallery.map((_, i) => `<button class="gallery-dot${i === 0 ? ' active' : ''}" data-idx="${i}"></button>`).join('')}
+          ${gallery.map((_, i) => `<button class="gallery-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="Foto ${i + 1}"></button>`).join('')}
         </div>
         <div class="gallery-counter" id="galleryCounter">1 / ${gallery.length}</div>
       ` : ''}
@@ -829,7 +829,7 @@ function openLightbox(gallery, startIndex) {
 
   const dotsWrap = el('lightboxDots');
   dotsWrap.innerHTML = multi
-    ? gallery.map((_, i) => `<button class="gallery-dot" data-idx="${i}"></button>`).join('')
+    ? gallery.map((_, i) => `<button class="gallery-dot" data-idx="${i}" aria-label="Foto ${i + 1}"></button>`).join('')
     : '';
   dotsWrap.querySelectorAll('.gallery-dot').forEach(dot => {
     dot.addEventListener('click', () => goLightboxSlide(Number(dot.dataset.idx)));
@@ -1610,14 +1610,36 @@ function sendServiceRequest() {
 }
 
 // ── MODALS ───────────────────────────────────────────────────
+let modalReturnFocus = null;
+
+function getFocusable(container) {
+  return Array.from(container.querySelectorAll(
+    'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  )).filter(node => node.offsetParent !== null);
+}
+
 function openModal(id) {
   const m = el(id);
-  if (m) m.classList.add('open');
+  if (!m) return;
+
+  modalReturnFocus = document.activeElement;
+  m.classList.add('open');
+
+  // Wait a tick so display:flex has taken effect before we measure focusable els.
+  setTimeout(() => {
+    const focusable = getFocusable(m);
+    (focusable[0] || m).focus();
+  }, 0);
 }
 
 function closeModal(id) {
   const m = el(id);
   if (m) m.classList.remove('open');
+
+  if (modalReturnFocus && typeof modalReturnFocus.focus === 'function') {
+    modalReturnFocus.focus();
+  }
+  modalReturnFocus = null;
 }
 
 // Close modal on backdrop click
@@ -1629,8 +1651,39 @@ function setupModalClose(id) {
   });
 }
 
+// Esc closes the open modal; Tab is trapped inside it while it's open.
+function setupModalA11y() {
+  document.addEventListener('keydown', e => {
+    const openM = document.querySelector('.modal-backdrop.open');
+    if (!openM) return;
+
+    if (e.key === 'Escape') {
+      closeModal(openM.id);
+      return;
+    }
+
+    if (e.key === 'Tab') {
+      const focusable = getFocusable(openM);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last  = focusable[focusable.length - 1];
+
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    }
+  });
+}
+
 // ── EVENT LISTENERS ───────────────────────────────────────────
 function setupListeners() {
+
+  // Modal accessibility: Esc to close, Tab trapped inside open modal
+  setupModalA11y();
 
   // Bottom nav
   qa('.nav-btn[data-screen]').forEach(btn => {
