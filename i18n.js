@@ -280,6 +280,20 @@ const TRANSLATIONS = {
     strength_4: 'Muito forte',
 
     sign_out: 'Sair',
+
+    aria_show_password:     'Mostrar senha',
+    aria_back:               'Voltar',
+    aria_close:               'Fechar',
+    aria_favorite:             'Favoritar',
+    aria_photo_prev:            'Foto anterior',
+    aria_photo_next:             'Próxima foto',
+    aria_photo_n:                 'Foto',
+    aria_decrease_adults:          'Diminuir adultos',
+    aria_increase_adults:           'Aumentar adultos',
+    aria_decrease_children:          'Diminuir crianças',
+    aria_increase_children:           'Aumentar crianças',
+    aria_star_one:                     'estrela',
+    aria_star_other:                    'estrelas',
   },
 
   en: {
@@ -538,6 +552,21 @@ const TRANSLATIONS = {
     strength_4: 'Very strong',
 
     sign_out: 'Sign out',
+
+    // ── ARIA LABELS (accessibility) ──
+    aria_show_password:     'Show password',
+    aria_back:               'Back',
+    aria_close:               'Close',
+    aria_favorite:             'Add to favorites',
+    aria_photo_prev:            'Previous photo',
+    aria_photo_next:             'Next photo',
+    aria_photo_n:                 'Photo',
+    aria_decrease_adults:          'Decrease adults',
+    aria_increase_adults:           'Increase adults',
+    aria_decrease_children:          'Decrease children',
+    aria_increase_children:           'Increase children',
+    aria_star_one:                     'star',
+    aria_star_other:                    'stars',
   },
 };
 
@@ -863,6 +892,24 @@ function applyI18n() {
   setText('btnBackToLoginFromCheck', 'auth_back_to_login');
 
   setText('lblSignOut', 'sign_out');
+
+  // ── ARIA LABELS (acessibilidade — precisam trocar junto com o idioma) ──
+  document.querySelectorAll('.auth-eye').forEach(btn => btn.setAttribute('aria-label', t('aria_show_password')));
+  document.querySelectorAll('.back-btn').forEach(btn => btn.setAttribute('aria-label', t('aria_back')));
+  setAttr('lightboxClose', 'aria-label', 'aria_close');
+  setAttr('lightboxPrev', 'aria-label', 'aria_photo_prev');
+  setAttr('lightboxNext', 'aria-label', 'aria_photo_next');
+
+  document.querySelectorAll('.counter-btn[data-type="adults"][data-op="minus"]').forEach(btn => btn.setAttribute('aria-label', t('aria_decrease_adults')));
+  document.querySelectorAll('.counter-btn[data-type="adults"][data-op="plus"]').forEach(btn => btn.setAttribute('aria-label', t('aria_increase_adults')));
+  document.querySelectorAll('.counter-btn[data-type="children"][data-op="minus"]').forEach(btn => btn.setAttribute('aria-label', t('aria_decrease_children')));
+  document.querySelectorAll('.counter-btn[data-type="children"][data-op="plus"]').forEach(btn => btn.setAttribute('aria-label', t('aria_increase_children')));
+
+  document.querySelectorAll('.review-star-btn').forEach(btn => {
+    const n = btn.dataset.val;
+    const word = n === '1' ? t('aria_star_one') : t('aria_star_other');
+    btn.setAttribute('aria-label', `${n} ${word}`);
+  });
 }
 
 function setLanguage(lang) {

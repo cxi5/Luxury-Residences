@@ -1,11 +1,11 @@
 /* ============================================================
    LUXURY RESIDENCES — SERVICE WORKER
-   Cache-first para assets estáticos, network-first para imagens
+   Cache-first para assets estáticos (incluindo imagens locais),
+   stale-while-revalidate para fontes externas
    ============================================================ */
 
 const CACHE_VERSION = 'luxe-v1';
 const CACHE_STATIC  = `${CACHE_VERSION}-static`;
-const CACHE_IMAGES  = `${CACHE_VERSION}-images`;
 
 // Assets que entram no cache na instalação
 const STATIC_ASSETS = [
@@ -35,7 +35,7 @@ self.addEventListener('activate', event => {
     caches.keys().then(keys =>
       Promise.all(
         keys
-          .filter(k => k.startsWith('luxe-') && k !== CACHE_STATIC && k !== CACHE_IMAGES)
+          .filter(k => k.startsWith('luxe-') && k !== CACHE_STATIC)
           .map(k => caches.delete(k))
       )
     ).then(() => self.clients.claim())
@@ -49,12 +49,6 @@ self.addEventListener('fetch', event => {
 
   // Ignora requests que não são GET ou são de outras origens não-whitelisted
   if (request.method !== 'GET') return;
-
-  // Imagens Unsplash → cache-first com fallback de rede
-  if (url.hostname.includes('unsplash.com')) {
-    event.respondWith(cacheFirstImage(request));
-    return;
-  }
 
   // Google Fonts → stale-while-revalidate
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
@@ -89,26 +83,6 @@ async function cacheFirst(request) {
   }
 }
 
-/** Cache-first para imagens com limite de entradas */
-async function cacheFirstImage(request) {
-  const cached = await caches.match(request);
-  if (cached) return cached;
-
-  try {
-    const response = await fetch(request);
-    if (response.ok) {
-      const cache = await caches.open(CACHE_IMAGES);
-      // Mantém no máximo 50 imagens para não explodir o storage
-      trimCache(cache, 50);
-      cache.put(request, response.clone());
-    }
-    return response;
-  } catch {
-    // Offline sem imagem → resposta vazia transparente
-    return new Response('', { status: 408, statusText: 'Offline' });
-  }
-}
-
 /** Stale-while-revalidate: retorna cache imediatamente e atualiza em background */
 async function staleWhileRevalidate(request, cacheName) {
   const cache  = await caches.open(cacheName);
@@ -120,14 +94,6 @@ async function staleWhileRevalidate(request, cacheName) {
   }).catch(() => null);
 
   return cached || networkPromise;
-}
-
-/** Remove entradas antigas do cache até atingir o limite máximo */
-async function trimCache(cache, maxEntries) {
-  const keys = await cache.keys();
-  if (keys.length >= maxEntries) {
-    await cache.delete(keys[0]);
-  }
 }
 
 // ── PUSH NOTIFICATIONS (base para futuro) ───────────────────

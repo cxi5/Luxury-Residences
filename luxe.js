@@ -15,8 +15,8 @@ const ROOMS_DATA = [
     floor: '14º andar',
     view: 'Vista Mar',
     status: 'available',
-    img: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600&q=80',
-    imgDetail: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80',
+    img: 'images/suite-presidencial-01.jpg',
+    imgDetail: 'images/suite-presidencial-01.jpg',
     desc: 'A suite mais exclusiva do hotel, com sala de estar separada, varanda privativa e vista panorâmica do oceano. Decoração contemporânea com toques de arte angolana selecionada. Banheira de imersão e amenidades Hermès.',
     amenities: ['Varanda Privativa', 'Banheira Imersão', 'Sala de Estar', 'Minibar Premium', 'Smart TV 75"', 'Wi-Fi 1Gbps', 'Butler Exclusivo', 'Chegada VIP'],
     rating: 4.9,
@@ -26,11 +26,11 @@ const ROOMS_DATA = [
       { author: 'Chen W.', date: '2026-03-18', rating: 5, text: 'Worth every penny. The VIP arrival and dedicated butler made us feel like royalty from the moment we stepped in.' },
     ],
     gallery: [
-      { url: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80', caption: 'Vista geral da suíte' },
-      { url: 'https://images.unsplash.com/photo-1631049421450-348ccd8ee171?w=800&q=80', caption: 'Varanda privativa com vista mar' },
-      { url: 'https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80', caption: 'Banheira de imersão' },
-      { url: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0?w=800&q=80', caption: 'Sala de estar separada' },
-      { url: 'https://images.unsplash.com/photo-1588362951121-3ee319b018b2?w=800&q=80', caption: 'Minibar & amenidades Hermès' },
+      { url: 'images/suite-presidencial-01.jpg', caption: 'Vista geral da suíte' },
+      { url: 'images/suite-presidencial-02.jpg', caption: 'Varanda privativa com vista mar' },
+      { url: 'images/suite-presidencial-03.jpg', caption: 'Banheira de imersão' },
+      { url: 'images/suite-presidencial-04.jpg', caption: 'Sala de estar separada' },
+      { url: 'images/suite-presidencial-05.jpg', caption: 'Minibar & amenidades Hermès' },
     ],
   },
   {
@@ -44,8 +44,8 @@ const ROOMS_DATA = [
     floor: '10º andar',
     view: 'Vista Piscina',
     status: 'available',
-    img: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=600&q=80',
-    imgDetail: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80',
+    img: 'images/master-deluxe-01.jpg',
+    imgDetail: 'images/master-deluxe-01.jpg',
     desc: 'Elegância e conforto com cama king-size, decoração sofisticada e vista para as piscinas privativas. Perfeito para casais em busca de privacidade e requinte na medida certa.',
     amenities: ['Cama King-size', 'Smart TV 65"', 'Minibar', 'Roupão Hermès', 'Wi-Fi Premium', 'Café da Manhã Incluso'],
     rating: 4.7,
@@ -54,11 +54,11 @@ const ROOMS_DATA = [
       { author: 'Ricardo A.', date: '2026-04-15', rating: 4, text: 'Ótimo quarto, muito bem decorado. Pequena ressalva: o minibar poderia ter mais opções de bebidas locais.' },
     ],
     gallery: [
-      { url: 'https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=800&q=80', caption: 'Quarto com cama king-size' },
-      { url: 'https://images.unsplash.com/photo-1611892440504-42a792e24d32?w=800&q=80', caption: 'Vista para as piscinas privativas' },
-      { url: 'https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=800&q=80', caption: 'Banheiro sofisticado' },
-      { url: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=800&q=80', caption: 'Detalhes da decoração' },
-      { url: 'https://images.unsplash.com/photo-1601565415267-724db0e5c7f9?w=800&q=80', caption: 'Smart TV 65" e área de descanso' },
+      { url: 'images/master-deluxe-01.jpg', caption: 'Quarto com cama king-size' },
+      { url: 'images/master-deluxe-02.jpg', caption: 'Vista para as piscinas privativas' },
+      { url: 'images/master-deluxe-03.jpg', caption: 'Banheiro sofisticado' },
+      { url: 'images/master-deluxe-04.jpg', caption: 'Detalhes da decoração' },
+      { url: 'images/master-deluxe-05.jpg', caption: 'Smart TV 65" e área de descanso' },
     ],
   },
   {
@@ -72,8 +72,8 @@ const ROOMS_DATA = [
     floor: '12º andar',
     view: 'Vista Mar Frontal',
     status: 'available', // real availability now comes from ROOM_BOOKINGS / state.stays
-    img: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=600&q=80',
-    imgDetail: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80',
+    img: 'images/suite-ocean-view-01.jpg',
+    imgDetail: 'images/suite-ocean-view-01.jpg',
     desc: 'Vista frontal para o Oceano Atlântico a partir do 12º andar. Arquitetura aberta que convida o mar para dentro do ambiente. Uma experiência visual inesquecível ao amanhecer.',
     amenities: ['Vista Frontal Mar', 'Varanda Ampla', 'Ducha Italiana', 'Escrivaninha', 'Smart TV 70"', 'Frigobar Encastrado'],
     rating: 4.8,
@@ -83,11 +83,11 @@ const ROOMS_DATA = [
       { author: 'Hannah B.', date: '2026-03-30', rating: 4, text: 'Great suite, the open architecture really brings the ocean inside. Would have liked a bathtub option though.' },
     ],
     gallery: [
-      { url: 'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80', caption: 'Vista frontal para o Oceano Atlântico' },
-      { url: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=800&q=80', caption: 'Varanda ampla com vista mar' },
-      { url: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=800&q=80', caption: 'Italian shower' },
-      { url: 'https://images.unsplash.com/photo-1522771739844-6a9f6d5f14af?w=800&q=80', caption: 'Área de trabalho com escrivaninha' },
-      { url: 'https://images.unsplash.com/photo-1564078516393-cf04bd966897?w=800&q=80', caption: 'Cama com vista para o horizonte' },
+      { url: 'images/suite-ocean-view-01.jpg', caption: 'Vista frontal para o Oceano Atlântico' },
+      { url: 'images/suite-ocean-view-02.jpg', caption: 'Varanda ampla com vista mar' },
+      { url: 'images/suite-ocean-view-03.jpg', caption: 'Italian shower' },
+      { url: 'images/suite-ocean-view-04.jpg', caption: 'Área de trabalho com escrivaninha' },
+      { url: 'images/suite-ocean-view-05.jpg', caption: 'Cama com vista para o horizonte' },
     ],
   },
   {
@@ -101,8 +101,8 @@ const ROOMS_DATA = [
     floor: '20º andar',
     view: 'Vista 360°',
     status: 'available',
-    img: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&q=80',
-    imgDetail: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
+    img: 'images/penthouse-01.jpg',
+    imgDetail: 'images/penthouse-01.jpg',
     desc: 'O cume da experiência. Dois andares, piscina privativa aquecida, terraço panorâmico com vista de 360° da cidade e do mar. Inclui chef privativo e serviço de mordomo 24 horas.',
     amenities: ['Piscina Privativa', 'Terraço 360°', 'Chef Privativo', 'Mordomo 24h', '2 Suítes Master', 'Sala Gourmet', 'Adega Climatizada', 'Transfer Helicóptero'],
     rating: 5.0,
@@ -111,11 +111,11 @@ const ROOMS_DATA = [
       { author: 'Isabela C.', date: '2026-04-20', rating: 5, text: 'Comemoramos nosso aniversário aqui e foi perfeito em cada detalhe. O chef privativo preparou um jantar inesquecível no terraço.' },
     ],
     gallery: [
-      { url: 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80', caption: 'Terraço panorâmico 360°' },
-      { url: 'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800&q=80', caption: 'Piscina privativa aquecida' },
-      { url: 'https://images.unsplash.com/photo-1578683010236-d716f9a3f461?w=800&q=80', caption: 'Sala gourmet com adega climatizada' },
-      { url: 'https://images.unsplash.com/photo-1594563703937-fdc640497dcd?w=800&q=80', caption: 'Suíte master principal' },
-      { url: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=800&q=80', caption: 'Vista da cidade ao entardecer' },
+      { url: 'images/penthouse-01.jpg', caption: 'Terraço panorâmico 360°' },
+      { url: 'images/penthouse-02.jpg', caption: 'Piscina privativa aquecida' },
+      { url: 'images/penthouse-03.jpg', caption: 'Sala gourmet com adega climatizada' },
+      { url: 'images/penthouse-04.jpg', caption: 'Suíte master principal' },
+      { url: 'images/penthouse-05.jpg', caption: 'Vista da cidade ao entardecer' },
     ],
   },
   {
@@ -129,8 +129,8 @@ const ROOMS_DATA = [
     floor: '8º andar',
     view: 'Vista Jardim',
     status: 'available',
-    img: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=600&q=80',
-    imgDetail: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80',
+    img: 'images/suite-romantica-01.jpg',
+    imgDetail: 'images/suite-romantica-01.jpg',
     desc: 'Pensada para momentos especiais. Decoração intimista com iluminação cênica, banheira para dois com pétalas de rosa na chegada, champagne de boas-vindas e cardápio afrodisíaco exclusivo.',
     amenities: ['Banheira para Dois', 'Champagne Chegada', 'Decoração Romântica', 'Jantar Privativo', 'Vista Jardim Zen', 'Aromaterapia'],
     rating: 4.6,
@@ -139,11 +139,11 @@ const ROOMS_DATA = [
       { author: 'Fernanda S.', date: '2026-04-08', rating: 4, text: 'Muito romântico e acolhedor. O jardim zen visto da varanda cria uma paz única. Recomendo para aniversários.' },
     ],
     gallery: [
-      { url: 'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&q=80', caption: 'Quarto com decoração romântica' },
-      { url: 'https://images.unsplash.com/photo-1584132967334-10e028bd69f7?w=800&q=80', caption: 'Banheira para dois com pétalas de rosa' },
-      { url: 'https://images.unsplash.com/photo-1561501900-3701fa6a0864?w=800&q=80', caption: 'Vista do jardim zen' },
-      { url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80', caption: 'Jantar privativo incluído' },
-      { url: 'https://images.unsplash.com/photo-1602524816235-73b77daba576?w=800&q=80', caption: 'Champagne e amenidades de boas-vindas' },
+      { url: 'images/suite-romantica-01.jpg', caption: 'Quarto com decoração romântica' },
+      { url: 'images/suite-romantica-02.jpg', caption: 'Banheira para dois com pétalas de rosa' },
+      { url: 'images/suite-romantica-03.jpg', caption: 'Vista do jardim zen' },
+      { url: 'images/suite-romantica-04.jpg', caption: 'Jantar privativo incluído' },
+      { url: 'images/suite-romantica-05.jpg', caption: 'Champagne e amenidades de boas-vindas' },
     ],
   },
 ];
@@ -199,6 +199,18 @@ function escapeHtml(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+// Monta o atributo srcset a partir da imagem original (images/nome.jpg),
+// usando as variantes -480w.jpg / -800w.jpg geradas junto com o arquivo
+// original de 1200px. Assim cada dispositivo baixa só o tamanho que precisa
+// em vez da mesma imagem de 1200px em qualquer tela.
+function buildSrcset(url) {
+  const dot = url.lastIndexOf('.');
+  if (dot === -1) return '';
+  const base = url.slice(0, dot);
+  const ext = url.slice(dot);
+  return `${base}-480w${ext} 480w, ${base}-800w${ext} 800w, ${url} 1200w`;
 }
 
 function fmt(v) {
@@ -490,9 +502,9 @@ function goBack(screenName) {
 
 // ── HERO IMAGE ROTATION ──────────────────────────────────────
 const heroImages = [
-  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&q=80',
-  'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&q=80',
-  'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=800&q=80',
+  'images/suite-ocean-view-01.jpg',
+  'images/penthouse-01.jpg',
+  'images/suite-presidencial-01.jpg',
 ];
 let heroIdx = 0;
 
@@ -548,8 +560,8 @@ function renderRooms(filter) {
     const photoCount = room.gallery && room.gallery.length ? room.gallery.length : 1;
     card.innerHTML = `
       <div class="room-card-img-wrap">
-        <img class="room-card-img" src="${room.img}" alt="${room.name}" loading="lazy">
-        <button class="btn-favorite${isFavorite(room.id) ? ' active' : ''}" data-room="${room.id}" aria-label="Favoritar">
+        <img class="room-card-img" src="${room.img}" srcset="${buildSrcset(room.img)}" sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw" alt="${room.name}" loading="lazy" decoding="async">
+        <button class="btn-favorite${isFavorite(room.id) ? ' active' : ''}" data-room="${room.id}" aria-label="${t('aria_favorite')}"
           <svg viewBox="0 0 24 24" fill="${isFavorite(room.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </button>
         ${photoCount > 1 ? `
@@ -645,22 +657,22 @@ function openRoomDetail(roomId) {
 
   el('roomDetailContent').innerHTML = `
     <div class="gallery" id="roomGallery">
-      <button class="btn-favorite btn-favorite-detail${isFavorite(room.id) ? ' active' : ''}" id="btnDetailFavorite" aria-label="Favoritar">
+      <button class="btn-favorite btn-favorite-detail${isFavorite(room.id) ? ' active' : ''}" id="btnDetailFavorite" aria-label="${t('aria_favorite')}"
         <svg viewBox="0 0 24 24" fill="${isFavorite(room.id) ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
       </button>
       <div class="gallery-track" id="galleryTrack">
         ${gallery.map((g, i) => `
           <div class="gallery-slide">
-            <img src="${g.url}" alt="${g.caption}" loading="${i === 0 ? 'eager' : 'lazy'}">
+            <img src="${g.url}" srcset="${buildSrcset(g.url)}" sizes="100vw" alt="${g.caption}" loading="${i === 0 ? 'eager' : 'lazy'}" decoding="async">
             <div class="gallery-caption">${g.caption}</div>
           </div>
         `).join('')}
       </div>
       ${gallery.length > 1 ? `
-        <button class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="Foto anterior">&#8249;</button>
-        <button class="gallery-arrow gallery-next" id="galleryNext" aria-label="Próxima foto">&#8250;</button>
+        <button class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="${t('aria_photo_prev')}">&#8249;</button>
+        <button class="gallery-arrow gallery-next" id="galleryNext" aria-label="${t('aria_photo_next')}">&#8250;</button>
         <div class="gallery-dots" id="galleryDots">
-          ${gallery.map((_, i) => `<button class="gallery-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="Foto ${i + 1}"></button>`).join('')}
+          ${gallery.map((_, i) => `<button class="gallery-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="${t('aria_photo_n')} ${i + 1}"></button>`).join('')}
         </div>
         <div class="gallery-counter" id="galleryCounter">1 / ${gallery.length}</div>
       ` : ''}
@@ -818,7 +830,7 @@ function openLightbox(gallery, startIndex) {
   const track = el('lightboxTrack');
   track.innerHTML = gallery.map(g => `
     <div class="lightbox-slide">
-      <img src="${g.url}" alt="${g.caption}">
+      <img src="${g.url}" srcset="${buildSrcset(g.url)}" sizes="100vw" alt="${g.caption}" loading="lazy" decoding="async">
       <div class="lightbox-caption">${g.caption}</div>
     </div>
   `).join('');
@@ -829,7 +841,7 @@ function openLightbox(gallery, startIndex) {
 
   const dotsWrap = el('lightboxDots');
   dotsWrap.innerHTML = multi
-    ? gallery.map((_, i) => `<button class="gallery-dot" data-idx="${i}" aria-label="Foto ${i + 1}"></button>`).join('')
+    ? gallery.map((_, i) => `<button class="gallery-dot" data-idx="${i}" aria-label="${t('aria_photo_n')} ${i + 1}"></button>`).join('')
     : '';
   dotsWrap.querySelectorAll('.gallery-dot').forEach(dot => {
     dot.addEventListener('click', () => goLightboxSlide(Number(dot.dataset.idx)));
@@ -915,7 +927,7 @@ function openBookingFlow(roomId, prefill) {
 
   el('bookFlow').innerHTML = `
     <div class="booking-card">
-      <img class="bc-img" src="${room.img}" alt="${room.name}">
+      <img class="bc-img" src="${room.img}" srcset="${buildSrcset(room.img)}" sizes="(min-width: 768px) 480px, 100vw" alt="${room.name}" loading="lazy" decoding="async">
       <div class="bc-info">
         <div class="bc-name">${room.name}</div>
         <div class="bc-price">${fmt(room.price)}<span style="font-size:11px;font-weight:400;color:var(--text-2)">/${t('per_night')}</span></div>
@@ -1023,7 +1035,7 @@ const BANK_ACCOUNTS = {
 function renderPaymentStep(room, ci, co, nights, total, guest) {
   el('bookFlow').innerHTML = `
     <div class="booking-card">
-      <img class="bc-img" src="${room.img}" alt="${room.name}">
+      <img class="bc-img" src="${room.img}" srcset="${buildSrcset(room.img)}" sizes="(min-width: 768px) 480px, 100vw" alt="${room.name}" loading="lazy" decoding="async">
       <div class="bc-info">
         <div class="bc-name">${room.name}</div>
         <div class="bc-price">${fmt(total)}</div>
@@ -1334,7 +1346,7 @@ function renderStays() {
     const card = document.createElement('div');
     card.className = 'stay-card';
     card.innerHTML = `
-      <img class="stay-card-img" src="${stay.roomImg}" alt="${stay.roomName}">
+      <img class="stay-card-img" src="${stay.roomImg}" srcset="${buildSrcset(stay.roomImg)}" sizes="(min-width: 768px) 480px, 100vw" alt="${stay.roomName}" loading="lazy" decoding="async">
       <div class="stay-card-body">
         <div class="stay-card-top">
           <span class="stay-card-name">${stay.roomName}</span>

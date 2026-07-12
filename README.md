@@ -1,79 +1,144 @@
-**Luxury Residences** (nome curto: LuxeStay) é uma Progressive Web App (PWA) mobile-first para um hotel 5 estrelas. O app funciona como a interface digital completa do hóspede — desde a descoberta e reserva de quartos até a gestão da estadia e solicitação de serviços in-room — com uma estética visual de ultra-luxo e arquitetura totalmente offline-capable.
+# Luxury Residences
 
-1. Discover (Tela Principal)
-A tela de entrada do app. Contém:
-Hero dinâmico — imagem de fundo em rotação automática a cada 5 segundos (3 fotos do hotel com transição suave de opacidade), título com tipografia Cormorant Garamond em itálico e eyebrow de boas-vindas.
-Search Float Card — cartão flutuante fixo sobre o hero com 3 campos interativos: Check-in, Check-out e Hóspedes. Ao tocar em qualquer campo, abre um modal dedicado. O botão Search rooms dispara a busca por disponibilidade real.
-Room Cards (Listing) — grid de quartos com foto, nome, tipo, área, andar, capacidade, rating em estrelas, preço por noite (ou total se datas selecionadas) e badge de disponibilidade. Cada card tem botão de favoritar (coração) e botão de reserva direta.
-Filter Chips — 5 filtros: Todos, Suítes, Deluxe, Penthouse, e Favoritos. O filtro de Favoritos mostra apenas os quartos salvos pelo utilizador.
-Amenities Strip — barra horizontal scrollável com 5 ícones de comodidades do hotel: Wi-Fi Premium, Concierge 24h, Spa & Wellness, Gastronomia, Transfer VIP.
+App de reservas de hotel de luxo (PWA), com fluxo completo de descoberta,
+reserva e gestão de estadias — Supabase como backend, sem frameworks no
+front-end.
 
-2. Room Detail (Detalhe do Quarto)
-Acessível ao tocar num card. Contém:
-Galeria de Fotos — carousel touch-swipeable com 5 fotos por quarto, setas de navegação, dots de progresso e contador (ex: "2 / 5"). Toque numa foto abre o Lightbox fullscreen com as mesmas fotos em alta resolução, navegação por swipe e botão de fechar.
-Informações Completas — nome, tipo, vista, área, andar, capacidade, descrição longa, lista de comodidades como tags (ex: Banheira Imersão, Butler Exclusivo, Minibar Premium).
-Reviews de Hóspedes — cards de avaliação com nome do autor, data, rating em estrelas e texto da review. Rating geral exibido com estrelas (ex: ★ 4.9).
-Pricing Contextual — se há datas selecionadas, exibe o total da estadia + nº de noites. Caso contrário, exibe o preço por noite. Badge de disponibilidade em tempo real.
-CTA de Reserva — botão dourado Reservar este quarto ou desativado com Indisponível caso o quarto esteja ocupado nas datas selecionadas.
+**🔗 Live: [luxuryresidences.pages.dev](https://luxuryresidences.pages.dev)**
+**👤 Conta de demonstração:** ver seção [Demo](#demo) abaixo.
 
-3. Booking Flow (Finalização de Reserva)
-Fluxo guiado com 3 etapas:
-Etapa 1 — Resumo — foto do quarto, nome, datas, nº de noites, total calculado automaticamente.
-Etapa 2 — Dados do Hóspede — campos: Nome completo, Email, Telefone, Pedidos especiais (textarea opcional).
-Etapa 3 — Pagamento — campos de cartão de crédito (número, titular, validade, CVV) com campo de dados do cartão.
-Ao confirmar, abre um modal de confirmação com ícone de check animado e botão para ir diretamente às My Stays.
+---
 
-4. My Stays (Minhas Estadias)
-Gestão completa de reservas. Dividida em 2 tabs:
-Upcoming — reservas futuras confirmadas. Cada card mostra foto do quarto, nome, datas, total pago, status Confirmed, e 3 ações: Edit (modal de edição de datas com verificação de conflito e preview de novo total), Cancel (cancela com confirmação), Rate (abre modal de avaliação com 5 estrelas + texto).
-History — reservas passadas. Mesmas informações mas com status Completed e opção de avaliar o quarto (se ainda não avaliado).
-O ícone de Stays na nav bar exibe um dot de notificação dourado quando há reservas ativas.
+## O problema que o projeto resolve
 
-5. Services (Serviços)
-Catálogo de 6 serviços solicitáveis durante a estadia, em grid 2×3:
-Spa — massagens e tratamentos
-Dinner — room service premium
-Transfer — aeroporto e tours
-Laundry — lavanderia com entrega em 4h
-Breakfast — café da manhã no quarto
-Concierge — assistência personalizada
-Ao tocar num serviço, abre um painel deslizante com campo de data/hora, notas adicionais e botão de envio. Submissão mostra toast de confirmação dourado.
+Plataformas de reserva de hotéis de luxo geralmente entregam uma de duas
+experiências: ou são genéricas (mesma UI de qualquer OTA, mesma sensação
+de "comparador de preços"), ou são pesadas (frameworks grandes, bundles
+grandes, tempo de carregamento alto — justo o oposto do que um hóspede
+premium espera de uma experiência rápida e discreta).
 
-6. Profile (Perfil)
-Área pessoal do hóspede com:
-Avatar e nome do utilizador
-Toggles de preferências: Notificações e Digital Check-in (persistidos no localStorage)
-Seletor de Idioma: Português (PT), English (EN), Español (ES)
-Seletor de Moeda: BRL (R), USD (), EUR (€)
-Botão de Logout
+O Luxury Residences foi construído pra testar até onde dá pra ir com
+**JavaScript vanilla + CSS custom + Supabase**, sem abrir mão de:
+- Autenticação real (cadastro, login, recuperação de senha)
+- Dados reais persistidos (quartos, reviews, reservas, cancelamentos)
+- Fluxo de reserva completo (busca → seleção → dados do hóspede → pagamento
+  mockado → confirmação)
+- PWA instalável, com suporte offline básico
+- Interface bilíngue (PT/EN) sem biblioteca de i18n
 
-Sistema de Internacionalização (i18n)
-O app suporta 3 idiomas completos com tradução de toda a interface — incluindo labels, botões, mensagens de erro, amenidades, serviços e formatação de datas. A troca de idioma é instantânea e re-renderiza todos os textos do DOM sem recarregar.
-A moeda também é comutável com formatação regional correta (R$ 1.680,00 / $336.00 / €310,00).
+## Stack
 
-Sistema de Disponibilidade
-A disponibilidade é calculada em tempo real por intervalo de datas, não por flag estática. O sistema combina:
-Reservas externas simuladas (ROOM_BOOKINGS) — outros hóspedes já reservaram certas datas
-Reservas do utilizador atual (state.stays) — evita double-booking
-Se um quarto está indisponível, o app calcula e exibe automaticamente a próxima data livre (ex: "Ocupado até 1 jul").
+| Camada | Tecnologia | Por quê |
+|---|---|---|
+| Front-end | HTML5 + CSS3 + JavaScript (ES6+, vanilla) | Sem build step, sem dependências de framework — todo o app roda de arquivos estáticos servidos direto do Cloudflare Pages |
+| Backend | [Supabase](https://supabase.com) (Postgres + Auth + Row Level Security) | Postgres real com autenticação embutida, sem precisar manter um back-end próprio; RLS garante que cada usuário só acessa suas próprias reservas mesmo com a chave `anon` exposta no client |
+| Hospedagem | Cloudflare Pages | Deploy estático, CDN global, HTTPS grátis |
+| PWA | `manifest.json` + Service Worker (`sw.js`) | Instalável, cache-first para assets estáticos, funciona parcialmente offline |
+| i18n | Sistema próprio (`i18n.js`) | Dicionário PT/EN simples, sem overhead de biblioteca para um app de 2 idiomas |
 
-Persistência de Dados
-Todo o estado relevante é salvo no localStorage:
-Reservas do hóspede
-Quartos favoritos
-Avaliações submetidas
-Preferências de notificação e check-in digital
-Overrides de status e rating dos quartos
-O app recupera o estado ao abrir e funciona continuamente sem necessidade de login ou backend.
+## Decisões técnicas
 
-PWA — Instalação e Offline
-Instalável no homescreen (Android/Chrome com banner nativo; iOS com metatags Apple)
-Service Worker registado para cache de assets e funcionamento offline
-Shortcut no manifest que leva direto à tela Minhas Estadias a partir do ícone instalado
-Banner de instalação inteligente: aparece com delay de 3s e não volta a aparecer se o utilizador dispensar
+**Por que Supabase em vez de back-end próprio?**
+O objetivo do projeto era demonstrar modelagem de dados e fluxos reais de
+produto (reserva, cancelamento, reviews), não reinventar autenticação e
+infraestrutura. Supabase dá Postgres + Auth + RLS prontos, o que deixou o
+tempo focado em UX e regras de negócio.
 
-Design e Tipografia
-Palette escura (background #0a0a0a) com dourado #C9A96E como cor de destaque
-Cormorant Garamond — tipografia serifada para títulos, preços e elementos de luxo
-Inter — tipografia sans-serif para UI, labels e corpo de texto
-Animações suaves em modais (slide-up), toasts (fade), hero (cross-fade), e galeria (transform translate)
+**Row Level Security (RLS)**
+Todas as tabelas sensíveis (`bookings`, `room_reviews`, `profiles`) têm
+políticas RLS ativas — um usuário autenticado só consegue ler/escrever
+linhas onde `guest_id` (ou equivalente) bate com o próprio `auth.uid()`.
+Isso importa porque a chave `anon` do Supabase é pública por design (vai
+no client-side); a segurança real vem das políticas no banco, não de
+esconder a chave.
+
+**PWA em vez de app nativo**
+Instalável via navegador (`manifest.json`), com um Service Worker que
+faz cache-first de assets estáticos (HTML/CSS/JS/imagens) e
+stale-while-revalidate para fontes do Google Fonts. Cobre o caso de uso
+principal (revisitar o app, carregamento rápido) sem a complexidade de
+publicar em App Store/Play Store.
+
+**Imagens hospedadas localmente**
+As fotos dos quartos inicialmente vinham direto de URLs do Unsplash.
+Migradas para a pasta `images/` do próprio projeto para não depender de
+disponibilidade de terceiros numa demo ao vivo (rate limit, mudança de
+URL, remoção de conteúdo pela plataforma de origem já aconteceu com 3
+das 26 fotos originais durante o desenvolvimento).
+
+**Fluxo de pagamento mockado**
+Sem integração real com gateway de pagamento (não é o objetivo do
+projeto), mas com uma tela dedicada entre "Completar reserva" e a
+confirmação — validação de formato de cartão, sem processar nada de
+verdade. Fecha a narrativa do fluxo de compra sem a complexidade de
+lidar com dinheiro real.
+
+## Funcionalidades
+
+- Autenticação completa (cadastro, login, recuperação de senha, validação de idade mínima e força de senha)
+- Busca e filtro de quartos (tipo, disponibilidade por data, favoritos)
+- Galeria de fotos por quarto com lightbox fullscreen
+- Fluxo de reserva: seleção de datas → dados do hóspede (pré-preenchidos com o usuário logado) → pagamento mockado → confirmação
+- Minhas Estadias: histórico de reservas confirmadas/passadas, com cancelamento e estado vazio dedicado
+- Avaliações (reviews) por quarto, vinculadas ao perfil do autor
+- Interface bilíngue PT/EN com conteúdo de quartos traduzido no banco
+- PWA instalável, funcional offline para navegação já cacheada
+
+## Demo
+
+Para avaliar sem precisar criar conta e confirmar e-mail:
+
+```
+Email: demo@luxuryresidences.com
+Senha: <definir — ver nota abaixo>
+```
+
+> **Nota de setup:** esta conta precisa ser criada uma vez no projeto
+> Supabase. Passos:
+> 1. Cadastre-se normalmente pelo próprio app com o e-mail acima.
+> 2. No painel do Supabase → **Authentication → Users**, localize o
+>    usuário e confirme o e-mail manualmente (ícone de "..." → *Confirm
+>    email*) — assim quem for avaliar não precisa acessar uma caixa de
+>    entrada real.
+> 3. Opcional: em **Authentication → Providers → Email**, desative
+>    "Confirm email" para novos cadastros, se quiser que qualquer
+>    avaliador crie a própria conta sem fricção.
+
+## Rodando localmente
+
+Não há build step — é só servir os arquivos estáticos:
+
+```bash
+git clone <repo>
+cd luxury-residences
+python3 -m http.server 8000
+# ou: npx serve
+```
+
+Abra `http://localhost:8000`. As credenciais do Supabase (URL + chave
+`anon`) já estão em `auth.js` — são públicas por design, protegidas por
+RLS no banco.
+
+## Estrutura
+
+```
+├── index.html          # shell do app (auth gate + telas)
+├── luxe.js              # lógica principal (estado, render, Supabase)
+├── auth.js               # autenticação (login/cadastro/recuperação)
+├── i18n.js                # dicionário PT/EN + troca de idioma
+├── luxe.css                # design system e estilos
+├── sw.js                     # service worker (cache PWA)
+├── manifest.json               # manifesto PWA
+├── icon-*.png / favicon-32.png   # ícones do app (todos os tamanhos)
+├── icon-source.svg                 # fonte vetorial do ícone
+├── images/                           # fotos dos quartos (hospedadas localmente)
+└── migrations/                         # scripts SQL, na ordem em que devem rodar
+    ├── 01_i18n_rooms.sql                 # colunas _en (conteúdo bilíngue)
+    └── 02_local_images.sql                 # aponta img/gallery pras imagens locais
+```
+
+## Roadmap / próximos passos
+
+- [ ] Integração real de pagamento (Stripe) caso o projeto evolua de portfólio para produto
+- [ ] Testes automatizados (hoje validado manualmente)
+- [ ] Mais idiomas além de PT/EN
