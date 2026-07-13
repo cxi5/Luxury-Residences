@@ -589,19 +589,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const app = aEl('app');
   if (app) app.style.display = 'none';
 
-  // Checa sessão existente
-  supabaseClient.auth.getSession().then(({ data }) => {
+  // Checa sessão existente.
+  // OBS: getSession() usa a Web Locks API por baixo dos panos e pode ficar
+  // pendurado (nunca resolver) quando a aba carrega em segundo plano ou o
+  // navegador posterga a liberação do lock — bug conhecido do supabase-js.
+  // Sintoma: o app fica com display:none pra sempre até o usuário trocar de
+  // aba e voltar (o evento de foco força o lock a liberar). Por isso usamos
+  // uma flag `resolved` + timeout de segurança, e tratamos também o evento
+  // INITIAL_SESSION do onAuthStateChange, que costuma disparar mesmo quando
+  // getSession() trava.
+  let sessionResolved = false;
+
+  const settleSession = (session) => {
+    if (sessionResolved) return;
+    sessionResolved = true;
     hideBootLoader();
-    if (data && data.session && data.session.user) {
-      enterApp(data.session.user);
+    if (session && session.user) {
+      enterApp(session.user);
     } else {
       aEl('authGate').hidden = false;
     }
+  };
+
+  supabaseClient.auth.getSession().then(({ data }) => {
+    settleSession(data && data.session);
   });
+
+  // Timeout de segurança: se getSession() não resolver em 4s, não deixa o
+  // app travado em branco — mostra o gate de login (o onAuthStateChange
+  // ainda pode chamar enterApp depois, se a sessão existir e destravar).
+  setTimeout(() => settleSession(null), 4000);
 
   // Reage a login / logout / refresh de token em tempo real
   supabaseClient.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session && session.user) {
+    if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && session.user) {
+      sessionResolved = true;
+      hideBootLoader();
       enterApp(session.user);
     } else if (event === 'SIGNED_OUT') {
       exitApp();

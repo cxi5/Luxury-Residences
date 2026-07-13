@@ -4,14 +4,24 @@
    stale-while-revalidate para fontes externas
    ============================================================ */
 
-const CACHE_VERSION = 'luxe-v1';
+// IMPORTANTE: sempre que fizer deploy de mudanças em index.html/auth.js/
+// luxe.js/i18n.js/luxe.css, BUMPE esse número de versão. É a única forma do
+// navegador dos usuários que já visitaram o site perceber que o sw.js mudou
+// e instalar a nova versão — senão eles ficam presos na versão em cache
+// mesmo depois de você atualizar os arquivos no servidor.
+const CACHE_VERSION = 'luxe-v2';
 const CACHE_STATIC  = `${CACHE_VERSION}-static`;
 
-// Assets que entram no cache na instalação
+// Extensões de "código" — sempre buscadas da rede primeiro, cache só como
+// fallback offline. Evita servir JS/HTML desatualizado depois de um deploy.
+const NETWORK_FIRST_EXTS = ['.html', '.js', '.css', '.json'];
+
+// Assets que entram no cache na instalação (código, pra ter fallback offline)
 const STATIC_ASSETS = [
   './index.html',
   './luxe.css',
   './luxe.js',
+  './auth.js',
   './i18n.js',
   './manifest.json',
   'https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap',
@@ -56,8 +66,15 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Assets estáticos locais → cache-first
+  // Assets locais de código (html/js/css/json) → network-first, pra sempre
+  // pegar a versão mais nova do servidor quando há internet
   if (url.origin === self.location.origin) {
+    const isCode = NETWORK_FIRST_EXTS.some(ext => url.pathname.endsWith(ext)) || url.pathname === '/' || url.pathname.endsWith('/');
+    if (isCode) {
+      event.respondWith(networkFirst(request));
+      return;
+    }
+    // Resto (imagens, ícones etc.) → cache-first, são pesados e raramente mudam
     event.respondWith(cacheFirst(request));
     return;
   }
@@ -80,6 +97,21 @@ async function cacheFirst(request) {
   } catch {
     // Offline e sem cache — retorna página principal como fallback
     return caches.match('./index.html');
+  }
+}
+
+/** Network-first: tenta a rede (sempre atualizado), cai pro cache se offline/falhar */
+async function networkFirst(request) {
+  try {
+    const response = await fetch(request);
+    if (response.ok) {
+      const cache = await caches.open(CACHE_STATIC);
+      cache.put(request, response.clone());
+    }
+    return response;
+  } catch {
+    const cached = await caches.match(request);
+    return cached || caches.match('./index.html');
   }
 }
 

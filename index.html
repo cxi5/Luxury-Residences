@@ -677,6 +677,17 @@
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
+<!-- Console de debug pra celular — só ativa com ?debug=1 na URL. -->
+<script>
+  if (location.search.includes('debug=1')) {
+    var erudaScript = document.createElement('script');
+    erudaScript.src = 'https://cdn.jsdelivr.net/npm/eruda';
+    erudaScript.async = false; // mantém ordem: carrega ANTES dos scripts do app
+    erudaScript.onload = function () { eruda.init(); };
+    document.head.appendChild(erudaScript);
+  }
+</script>
+
 <!-- Supabase SDK (Auth) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="i18n.js"></script>
