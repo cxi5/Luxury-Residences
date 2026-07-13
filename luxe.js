@@ -181,6 +181,7 @@ const state = {
   filter:       'all',
   favorites:    [],
   currentUser:  null,
+  dataLoaded:   false, // vira true quando loadAppData() completa com sucesso
 };
 
 // (Real stays are loaded from Supabase in loadAppData(), see below —
@@ -515,6 +516,13 @@ function rotateHero() {
     img.style.opacity = '0';
     img.style.transition = 'opacity 0.8s ease';
     setTimeout(() => {
+      // O atributo srcset (usado no HTML pra performance no load inicial)
+      // tem prioridade sobre `src` na escolha de imagem responsiva do browser.
+      // Sem removê-lo aqui, o browser ignora as trocas de `src` abaixo e
+      // fica sempre reexibindo a variante da imagem original — por isso
+      // a rotação nunca saía da primeira foto.
+      img.removeAttribute('srcset');
+      img.removeAttribute('sizes');
       img.src = heroImages[heroIdx];
       img.style.opacity = '1';
     }, 400);
@@ -905,6 +913,12 @@ function openBookingFlow(roomId, prefill) {
 
   const ci = state.checkin  || today();
   const co = state.checkout || tomorrow();
+  // Garante que o state reflita as datas efetivamente em uso nesta tela,
+  // mesmo quando o hóspede chegou aqui sem passar pela busca (fallback
+  // hoje/amanhã) — assim o modal de datas abre pré-preenchido e a edição
+  // de noites funciona a partir daqui também.
+  state.checkin  = ci;
+  state.checkout = co;
 
   if (!isRoomAvailable(room.id, ci, co)) {
     toast(t('toast_not_avail'));
@@ -932,7 +946,7 @@ function openBookingFlow(roomId, prefill) {
         <div class="bc-name">${room.name}</div>
         <div class="bc-price">${fmt(room.price)}<span style="font-size:11px;font-weight:400;color:var(--text-2)">/${t('per_night')}</span></div>
       </div>
-      <div class="bc-dates">
+      <div class="bc-dates bc-dates-editable" id="bcDatesEdit" role="button" tabindex="0">
         <div class="bc-date-item">
           <span class="bc-date-label">Check-in</span>
           <span class="bc-date-val">${fmtDate(ci)}</span>
@@ -945,6 +959,7 @@ function openBookingFlow(roomId, prefill) {
           <span class="bc-date-label">${t('night_plural')}</span>
           <span class="bc-date-val">${nights}</span>
         </div>
+        <svg class="bc-dates-edit-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
       </div>
     </div>
 
@@ -967,28 +982,36 @@ function openBookingFlow(roomId, prefill) {
       <div class="book-section-title">${t('bf_guest_data')}</div>
       <div class="field-dark">
         <label>${t("bf_name_lbl")}</label>
-        <input type="text" id="bfName" placeholder=t('bf_name_ph') value="${escapeHtml(guestName)}">
+        <input type="text" id="bfName" placeholder="${t('bf_name_ph')}" value="${escapeHtml(guestName)}">
         <span class="field-error-msg" id="bfNameErr">${t('bf_err_name')}</span>
       </div>
       <div class="field-dark">
         <label>${t("bf_email_lbl")}</label>
-        <input type="email" id="bfEmail" placeholder=t('bf_email_ph') value="${escapeHtml(guestEmail)}">
+        <input type="email" id="bfEmail" placeholder="${t('bf_email_ph')}" value="${escapeHtml(guestEmail)}">
         <span class="field-error-msg" id="bfEmailErr">${t('bf_err_email')}</span>
       </div>
       <div class="field-dark">
         <label>${t("bf_phone_lbl")}</label>
-        <input type="tel" id="bfPhone" placeholder=t('bf_phone_ph') value="${escapeHtml(guestPhone)}">
+        <input type="tel" id="bfPhone" placeholder="${t('bf_phone_ph')}" value="${escapeHtml(guestPhone)}">
         <span class="field-error-msg" id="bfPhoneErr">${t('bf_err_phone')}</span>
       </div>
       <div class="field-dark">
         <label>${t("bf_notes_lbl")}</label>
-        <textarea id="bfNotes" rows="2" placeholder=t('bf_notes_ph')>${escapeHtml(guestNotes)}</textarea>
+        <textarea id="bfNotes" rows="2" placeholder="${t('bf_notes_ph')}">${escapeHtml(guestNotes)}</textarea>
       </div>
     </div>
 
     <button class="btn-gold" id="btnCompleteBooking">${t('bf_confirm_btn')} · ${fmt(total)}</button>
     <button class="btn-ghost-sm" id="btnCancelBook">${t('bf_back')}</button>
   `;
+
+  const bcDatesEditEl = el('bcDatesEdit');
+  if (bcDatesEditEl) {
+    bcDatesEditEl.addEventListener('click', () => openDatesModal());
+    bcDatesEditEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openDatesModal(); }
+    });
+  }
 
   el('btnCompleteBooking').addEventListener('click', () => {
     const name  = el('bfName').value.trim();
@@ -1281,6 +1304,21 @@ function confirmDates() {
 
   closeModal('modalDates');
   renderRooms();
+
+  // Se o modal foi aberto a partir do ecrã de reserva (hóspede mudando
+  // as noites ali mesmo), reconstrói esse ecrã com o novo cálculo em vez
+  // de deixar o resumo de preço/noites desatualizado — preservando os
+  // dados do formulário já preenchidos.
+  const bookScreen = el('screen-book');
+  if (state.activeRoom && bookScreen && bookScreen.classList.contains('active')) {
+    const prefill = {
+      name:  (el('bfName')  && el('bfName').value)  || '',
+      email: (el('bfEmail') && el('bfEmail').value) || '',
+      phone: (el('bfPhone') && el('bfPhone').value) || '',
+      notes: (el('bfNotes') && el('bfNotes').value) || '',
+    };
+    openBookingFlow(state.activeRoom, prefill);
+  }
 }
 
 // ── GUESTS MODAL ──────────────────────────────────────────────
@@ -1838,19 +1876,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Rooms/bookings depend on a logged-in guest — auth.js calls
   // window.RotaApp.init(user) once a Supabase session is confirmed.
+  //
+  // IMPORTANTE: loadAppData() faz queries ao Supabase sem timeout próprio.
+  // Se a conexão travar (comum em dados móveis instáveis, ou porque o
+  // navegador suspende requests pendentes de abas em segundo plano), a
+  // Promise nunca resolve nem rejeita — fica presa pra sempre, e os quartos
+  // nunca aparecem, sem nenhum erro no console. initAppDataWithRetry() põe
+  // um teto de tempo nisso e tenta de novo automaticamente.
   window.RotaApp = {
     init: async (user) => {
-      await loadAppData(user);
-      renderRooms();
-      renderStays();
-      updateStaysDot();
+      state.dataLoaded = false;
+      await initAppDataWithRetry(user);
     },
     reset: () => {
       ROOMS_DATA.length = 0;
       state.stays = [];
       state.currentUser = null;
+      state.dataLoaded = false;
       Object.keys(ROOM_BOOKINGS).forEach(k => delete ROOM_BOOKINGS[k]);
     },
   };
 
+  // Se o app voltar a ficar visível (usuário trocou de aba/app e voltou) e
+  // os dados ainda não carregaram, tenta de novo na hora — isso é
+  // exatamente o "conserto manual" que travar em segundo plano forçava o
+  // usuário a fazer, só que automático agora.
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && state.currentUser && !state.dataLoaded) {
+      initAppDataWithRetry(state.currentUser);
+    }
+  });
+
 });
+
+// Corre uma Promise contra um cronômetro — se o tempo estourar antes da
+// Promise original resolver, rejeita com um erro identificável, ao invés
+// de deixar a chamada pendurada pra sempre.
+function withTimeout(promise, ms, label) {
+  let timer;
+  const timeout = new Promise((_, reject) => {
+    timer = setTimeout(() => reject(new Error(`timeout:${label}`)), ms);
+  });
+  return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
+}
+
+// Carrega os dados do app com timeout + retry com backoff. Sem isso, uma
+// única query travada (rooms/reviews/bookings) deixava a tela de quartos
+// vazia pra sempre, sem erro nenhum — só "resolvia sozinha" se o usuário
+// trocasse de aba e voltasse (o que descongela requests suspensos pelo
+// navegador). Agora tentamos de novo sozinhos antes de precisar disso.
+// Mostra um estado de carregamento no grid de quartos enquanto os dados
+// não chegam — sem isso o usuário ficava olhando pra um espaço vazio sem
+// saber se estava carregando, travado, ou quebrado.
+function renderRoomsLoading(message) {
+  const grid = el('roomCards');
+  if (!grid) return;
+  grid.innerHTML = `
+    <div class="room-cards-loading">
+      <div class="spinner"></div>
+      <span>${escapeHtml(message)}</span>
+    </div>
+  `;
+}
+
+async function initAppDataWithRetry(user, attempt = 1) {
+  const MAX_ATTEMPTS = 3;
+  const TIMEOUT_MS = attempt === 1 ? 6000 : 8000; // 1ª tentativa mais curta — testado: 8s é demorado demais pra descobrir se a conexão está normal
+  renderRoomsLoading(attempt === 1
+    ? 'Carregando quartos…'
+    : `Conexão lenta, tentando de novo (${attempt}/${MAX_ATTEMPTS})…`);
+  try {
+    await withTimeout(loadAppData(user), TIMEOUT_MS, 'loadAppData');
+    state.dataLoaded = true;
+    renderRooms();
+    renderStays();
+    updateStaysDot();
+  } catch (err) {
+    console.warn(`[RotaApp] loadAppData falhou (tentativa ${attempt}/${MAX_ATTEMPTS}):`, err);
+    if (attempt < MAX_ATTEMPTS) {
+      setTimeout(() => initAppDataWithRetry(user, attempt + 1), 1200 * attempt);
+    } else {
+      renderRoomsLoading('Não foi possível carregar os quartos.');
+      toast('Conexão instável — não foi possível carregar os quartos. Puxe pra atualizar.');
+    }
+  }
+}
