@@ -178,6 +178,7 @@ const state = {
   stays:        [],
   staysTab:     'upcoming',
   activeService: null,
+  serviceRequests: [],
   filter:       'all',
   favorites:    [],
   currentUser:  null,
@@ -220,6 +221,15 @@ function fmt(v) {
 
 function fmtDate(str) {
   return formatDate(str);
+}
+
+function fmtDateTime(isoStr) {
+  if (!isoStr) return '—';
+  const d = new Date(isoStr);
+  if (isNaN(d.getTime())) return '—';
+  const dateStr = `${String(d.getDate()).padStart(2, '0')} ${t('months')[d.getMonth()]} ${d.getFullYear()}`;
+  const timeStr = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+  return `${dateStr} · ${timeStr}`;
 }
 
 // ── PERSISTENCE ──────────────────────────────────────────────
@@ -367,6 +377,21 @@ async function loadAppData(user) {
       guestName: b.guest_name,
     };
   });
+
+  const { data: requestRows } = await supabaseClient
+    .from('service_requests')
+    .select('*')
+    .eq('guest_id', user.id)
+    .order('created_at', { ascending: false });
+
+  state.serviceRequests = (requestRows || []).map(r => ({
+    id: r.id,
+    serviceKey: r.service_key,
+    preferredAt: r.preferred_at,
+    notes: r.notes,
+    status: r.status,
+    createdAt: r.created_at,
+  }));
 }
 
 // Refreshes ROOM_BOOKINGS from the room_occupancy view (all guests' confirmed
@@ -1642,21 +1667,194 @@ async function submitReview() {
 function openServiceRequest(serviceKey) {
   state.activeService = serviceKey;
   el('srpTitle').textContent = `${t('srp_request')} ${getServiceName(serviceKey)}`;
+  const dateInput = el('serviceDate');
+  if (dateInput) {
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    dateInput.min = now.toISOString().slice(0, 16);
+  }
   const panel = el('serviceRequestPanel');
   panel.style.display = 'block';
   panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 }
 
-function sendServiceRequest() {
-  const date  = el('serviceDate').value;
-  const notes = el('serviceNotes').value.trim();
-  if (!date) { toast(t('svc_date_req')); return; }
+async function sendServiceRequest() {
+  const dateVal = el('serviceDate').value;
+  const notes   = el('serviceNotes').value.trim();
+  if (!dateVal) { toast(t('svc_date_req')); return; }
+
+  const user = state.currentUser;
+  if (!user) { toast(t('auth_err_email_required') || 'Sessão expirada. Entre novamente.'); return; }
+
+  // Vincula a uma reserva confirmada em andamento/futura, se houver —
+  // não é obrigatório (ex: hóspede solicitando algo antes do check-in).
+  const relatedStay = state.stays.find(s => s.status === 'confirmed' && s.checkout >= today());
+
+  const btn = el('btnSendService');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  const { data, error } = await supabaseClient
+    .from('service_requests')
+    .insert({
+      guest_id:     user.id,
+      booking_id:   relatedStay ? relatedStay.id : null,
+      service_key:  state.activeService,
+      preferred_at: new Date(dateVal).toISOString(),
+      notes:        notes || null,
+    })
+    .select()
+    .single();
+
+  btn.disabled = false;
+  btn.textContent = originalText;
+
+  if (error) {
+    toast('Não foi possível enviar a solicitação. Tente novamente.');
+    return;
+  }
+
+  state.serviceRequests.unshift({
+    id: data.id,
+    serviceKey: data.service_key,
+    preferredAt: data.preferred_at,
+    notes: data.notes,
+    status: data.status,
+    createdAt: data.created_at,
+  });
 
   el('serviceRequestPanel').style.display = 'none';
   el('serviceDate').value  = '';
   el('serviceNotes').value = '';
   toast(`${getServiceName(state.activeService)} ${t('svc_success')}`, 'gold');
   state.activeService = null;
+  renderServiceRequests();
+}
+
+function svcStatusLabel(status) {
+  const map = { pending: 'svc_status_pending', confirmed: 'svc_status_confirmed', completed: 'svc_status_completed', cancelled: 'svc_status_cancelled' };
+  return t(map[status] || 'svc_status_pending');
+}
+
+function renderServiceRequests() {
+  const container = el('serviceRequestsList');
+  if (!container) return;
+
+  if (!state.serviceRequests.length) {
+    container.innerHTML = '';
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="book-section-title">${t('svc_my_requests')}</div>
+    ${state.serviceRequests.map(r => `
+      <div class="svc-request-card">
+        <div class="svc-request-top">
+          <span class="svc-request-name">${getServiceName(r.serviceKey)}</span>
+          <span class="svc-request-badge svc-status-${r.status}">${svcStatusLabel(r.status)}</span>
+        </div>
+        <div class="svc-request-when">${fmtDateTime(r.preferredAt)}</div>
+        ${r.notes ? `<div class="svc-request-notes">${escapeHtml(r.notes)}</div>` : ''}
+      </div>
+    `).join('')}
+  `;
+}
+
+// ── PROFILE EDIT ─────────────────────────────────────────────
+function openEditProfileModal(field) {
+  const user = state.currentUser;
+  if (!user) return;
+
+  const meta = user.user_metadata || {};
+  const currentValues = {
+    full_name: meta.full_name || '',
+    email:     user.email || '',
+    phone:     meta.phone || '',
+  };
+  const labelKeys  = { full_name: 'profile_name_lbl', email: 'profile_email_lbl', phone: 'profile_phone_lbl' };
+  const inputTypes = { full_name: 'text', email: 'email', phone: 'tel' };
+
+  el('editProfileField').value = field;
+  el('editProfileLabel').textContent      = t(labelKeys[field]);
+  el('modalEditProfileTitle').textContent = t(labelKeys[field]);
+
+  const input = el('editProfileValue');
+  input.type  = inputTypes[field] || 'text';
+  input.value = currentValues[field];
+  clearFieldError('editProfileValue', 'editProfileErr');
+
+  const note = el('editProfileNote');
+  if (field === 'email') {
+    note.textContent = t('profile_email_note');
+    note.style.display = 'block';
+  } else {
+    note.style.display = 'none';
+  }
+
+  openModal('modalEditProfile');
+  setTimeout(() => input.focus(), 50);
+}
+
+async function saveEditProfile() {
+  const field = el('editProfileField').value;
+  const value = el('editProfileValue').value.trim();
+
+  if (field === 'full_name' && !value) {
+    setFieldError('editProfileValue', 'editProfileErr', t('bf_err_name'));
+    return;
+  }
+  if (field === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+    setFieldError('editProfileValue', 'editProfileErr', t('bf_err_email'));
+    return;
+  }
+  if (field === 'phone' && !value) {
+    setFieldError('editProfileValue', 'editProfileErr', t('bf_err_phone'));
+    return;
+  }
+  clearFieldError('editProfileValue', 'editProfileErr');
+
+  const btn = el('btnSaveEditProfile');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '…';
+
+  // Email muda de rota: precisa de confirmação por link (Supabase Auth),
+  // então não mexemos em user_metadata pra isso — nome e telefone são
+  // dados de perfil simples e podem ser gravados direto.
+  const payload = field === 'email' ? { email: value } : { data: { [field]: value } };
+  const { data, error } = await supabaseClient.auth.updateUser(payload);
+
+  btn.disabled = false;
+  btn.textContent = originalText;
+
+  if (error) {
+    setFieldError('editProfileValue', 'editProfileErr', error.message || t('bf_err_email'));
+    return;
+  }
+
+  closeModal('modalEditProfile');
+
+  if (field === 'email') {
+    // A troca só é efetivada depois que o hóspede confirma pelo link
+    // enviado ao novo endereço — por isso não atualizamos o display aqui.
+    toast(t('profile_email_sent'), 'gold');
+    return;
+  }
+
+  state.currentUser = data.user || state.currentUser;
+
+  if (field === 'full_name') {
+    el('profileFullName').textContent = value;
+    el('profileName').textContent = value;
+    const initials = value.trim().split(/\s+/).map(p => p[0]).slice(0, 2).join('').toUpperCase();
+    el('profileAvatar').textContent = initials || '—';
+  }
+  if (field === 'phone') {
+    el('profilePhone').textContent = value;
+  }
+
+  toast(t('profile_updated'), 'gold');
 }
 
 // ── MODALS ───────────────────────────────────────────────────
@@ -1741,6 +1939,7 @@ function setupListeners() {
       const screen = btn.dataset.screen;
       goTo(screen);
       if (screen === 'stays') renderStays();
+      if (screen === 'services') renderServiceRequests();
     });
   });
 
@@ -1847,6 +2046,14 @@ function setupListeners() {
   if (notifToggleEl) notifToggleEl.addEventListener('change', persistPrefs);
   const digitalCheckinEl = el('digitalCheckin');
   if (digitalCheckinEl) digitalCheckinEl.addEventListener('change', persistPrefs);
+
+  // Editable profile fields (Full name / Email / Phone)
+  qa('.profile-section .ps-item[data-field]').forEach(btn => {
+    btn.addEventListener('click', () => openEditProfileModal(btn.dataset.field));
+  });
+  el('btnSaveEditProfile').addEventListener('click', saveEditProfile);
+  el('btnCancelEditProfile').addEventListener('click', () => closeModal('modalEditProfile'));
+  setupModalClose('modalEditProfile');
 }
 
 // ── INIT ──────────────────────────────────────────────────────
@@ -1950,6 +2157,7 @@ async function initAppDataWithRetry(user, attempt = 1) {
     state.dataLoaded = true;
     renderRooms();
     renderStays();
+    renderServiceRequests();
     updateStaysDot();
   } catch (err) {
     console.warn(`[RotaApp] loadAppData falhou (tentativa ${attempt}/${MAX_ATTEMPTS}):`, err);

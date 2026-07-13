@@ -995,6 +995,62 @@ input, select, textarea { font-family: inherit; }
 .srp-close:hover { color: var(--text); }
 .srp-close svg { width: 15px; height: 15px; }
 
+/* ── SERVICE REQUESTS LIST ── */
+.service-requests-list {
+  margin: 0 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.svc-request-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 14px 16px;
+}
+
+.svc-request-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.svc-request-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.svc-request-badge {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  padding: 3px 9px;
+  border-radius: var(--r-full);
+  text-transform: uppercase;
+  flex-shrink: 0;
+}
+
+.svc-status-pending   { background: var(--gold-dim); color: var(--gold); }
+.svc-status-confirmed { background: rgba(93,184,122,0.12); color: #5DB87A; }
+.svc-status-completed { background: var(--surface-2); color: var(--text-3); }
+.svc-status-cancelled { background: rgba(220,90,90,0.12); color: #E07A7A; }
+
+.svc-request-when {
+  font-size: 12px;
+  color: var(--text-2);
+}
+
+.svc-request-notes {
+  font-size: 12px;
+  color: var(--text-3);
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid var(--border);
+}
+
 /* ── PROFILE ── */
 .profile-hero {
   display: flex;

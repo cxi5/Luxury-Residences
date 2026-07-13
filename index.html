@@ -387,6 +387,8 @@
       <button class="btn-gold" id="btnSendService">Confirm request</button>
     </div>
 
+    <div class="service-requests-list" id="serviceRequestsList"></div>
+
   </div>
 
   <!-- ══ SCREEN: PROFILE ══ -->
@@ -400,15 +402,15 @@
     <div class="profile-sections">
       <div class="profile-section">
         <div class="ps-title">Account</div>
-        <button class="ps-item">
+        <button class="ps-item" id="psFullName" data-field="full_name">
           <span>Full name</span>
           <span class="ps-value" id="profileFullName">—</span>
         </button>
-        <button class="ps-item">
+        <button class="ps-item" id="psEmail" data-field="email">
           <span>Email</span>
           <span class="ps-value" id="profileEmail">—</span>
         </button>
-        <button class="ps-item">
+        <button class="ps-item" id="psPhone" data-field="phone">
           <span>Phone</span>
           <span class="ps-value" id="profilePhone">—</span>
         </button>
@@ -610,6 +612,26 @@
 
     <button class="btn-gold" id="btnSaveEditBooking">Save changes</button>
     <button class="btn-ghost-sm" id="btnCancelEditBooking">Cancelar</button>
+  </div>
+</div>
+
+<!-- Edit profile field modal -->
+<div class="modal-backdrop" id="modalEditProfile" role="dialog" aria-modal="true" aria-labelledby="modalEditProfileTitle">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <h3 class="modal-title" id="modalEditProfileTitle">Edit</h3>
+    <input type="hidden" id="editProfileField">
+
+    <div class="field-dark">
+      <label id="editProfileLabel">—</label>
+      <input type="text" id="editProfileValue">
+      <span class="field-error-msg" id="editProfileErr"></span>
+    </div>
+
+    <p class="modal-sub" id="editProfileNote" style="display:none"></p>
+
+    <button class="btn-gold" id="btnSaveEditProfile">Save</button>
+    <button class="btn-ghost-sm" id="btnCancelEditProfile">Cancelar</button>
   </div>
 </div>
 
