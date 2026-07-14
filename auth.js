@@ -1,35 +1,29 @@
-/* ============================================================
-   LUXURY RESIDENCES — AUTH MODULE
-   Login · Cadastro · Recuperação de senha · Gate de acesso
-   Backend: Supabase (Postgres + Auth)
-   ============================================================ */
-
-// ── CONFIG ───────────────────────────────────────────────────
-// TODO: substituir pelos dados do seu projeto Supabase
-// (Project Settings → API, no painel do Supabase).
+/* LUXURY RESIDENCES — AUTH MODULE
+Login · Cadastro · Recuperação de senha, Gate de acesso.
+Backend: Supabase (Postgres + Auth)*/
 const SUPABASE_URL      = 'https://mickvntfgyddeqxxnmjm.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_EqViSaWUKdHSzAML1CJSZw_oK3tVaYZ';
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// ── DOM HELPERS ──────────────────────────────────────────────
+// ── DOM HELPERS
 const aEl = id => document.getElementById(id);
 const aQa = sel => document.querySelectorAll(sel);
 
-// ── STATE ────────────────────────────────────────────────────
+// ── STATE
 const authState = {
-  view: 'login',       // 'login' | 'signup' | 'forgot' | 'check-email'
+  view: 'login', // 'login' | 'signup' | 'forgot' | 'check-email'
   submitting: false,
 };
 
-// ── VALIDATION HELPERS ───────────────────────────────────────
+// ── VALIDATION HELPERS
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function isValidEmail(value) {
   return EMAIL_RE.test(String(value || '').trim());
 }
 
-// ── VALIDAÇÃO: DATA DE NASCIMENTO ────────────────────────────
+// ── VALIDAÇÃO: DATA DE NASCIMENTO
 const MIN_SIGNUP_AGE = 18;
 
 // Retorna { valid, reason } onde reason é 'invalid' | 'future' | 'underage' | null
@@ -70,7 +64,7 @@ function passwordStrength(pw) {
   };
 }
 
-// ── FIELD ERROR HELPERS ──────────────────────────────────────
+// ── FIELD ERROR HELPERS
 function setFieldError(inputId, errId, message) {
   const input = aEl(inputId);
   const err   = aEl(errId);
@@ -113,7 +107,7 @@ function clearFormMessage(msgId) {
   box.className = 'auth-form-msg';
 }
 
-// ── SUPABASE ERROR → MENSAGEM AMIGÁVEL ───────────────────────
+// ── SUPABASE ERROR → MENSAGEM AMIGÁVEL
 function friendlyAuthError(error) {
   const lang = (typeof i18nState !== 'undefined' && i18nState.language === 'pt') ? 'pt' : 'en';
   const msg = (error && error.message) || '';
@@ -146,7 +140,7 @@ function friendlyAuthError(error) {
     : 'Something went wrong. Please try again.');
 }
 
-// ── BUTTON LOADING STATE ─────────────────────────────────────
+// ── BUTTON LOADING STATE
 function setButtonLoading(btnId, loading) {
   const btn = aEl(btnId);
   if (!btn) return;
@@ -154,7 +148,7 @@ function setButtonLoading(btnId, loading) {
   btn.classList.toggle('loading', loading);
 }
 
-// ── PASSWORD VISIBILITY TOGGLE ───────────────────────────────
+// ── PASSWORD VISIBILITY TOGGLE
 function initPasswordToggles() {
   aQa('.auth-eye').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -168,7 +162,7 @@ function initPasswordToggles() {
   });
 }
 
-// ── VIEW SWITCHING ────────────────────────────────────────────
+// ── VIEW SWITCHING
 function switchAuthView(viewName) {
   authState.view = viewName;
 
@@ -197,7 +191,7 @@ function initAuthNav() {
   });
 }
 
-// ── SIGNUP: MEDIDOR DE FORÇA DA SENHA (live) ─────────────────
+// ── SIGNUP: MEDIDOR DE FORÇA DA SENHA (live)
 function initStrengthMeter() {
   const input = aEl('signupPassword');
   const wrap  = aEl('signupStrengthWrap');
@@ -219,7 +213,7 @@ function initStrengthMeter() {
   });
 }
 
-// ── LOGIN ─────────────────────────────────────────────────────
+// ── LOGIN
 function validateLoginForm() {
   let ok = true;
   const email = aEl('loginEmail').value.trim();
@@ -270,7 +264,7 @@ async function handleLoginSubmit(e) {
   // onAuthStateChange cuida de esconder o gate e entrar no app
 }
 
-// ── CADASTRO ─────────────────────────────────────────────────
+// ── CADASTRO
 function validateSignupForm() {
   let ok = true;
   const name       = aEl('signupName').value.trim();
@@ -377,15 +371,13 @@ async function handleSignupSubmit(e) {
     return;
   }
 
-  // Se o projeto exige confirmação de e-mail, não há sessão ainda —
-  // mostramos a tela de "verifique seu e-mail". Se confirmação estiver
-  // desativada no Supabase, onAuthStateChange já loga o usuário direto.
+  // Exige confirmação de e-mail, não há sessão ainda — mostramos a tela de "verifique seu e-mail". Se confirmação estiver desativada no Supabase, onAuthStateChange já loga o usuário direto.
   if (data && data.user && !data.session) {
     showCheckEmail(email, 'signup');
   }
 }
 
-// ── RECUPERAR SENHA ───────────────────────────────────────────
+// ── RECUPERAR SENHA
 function validateForgotForm() {
   let ok = true;
   const email = aEl('forgotEmail').value.trim();
@@ -443,7 +435,7 @@ function showCheckEmail(email, origin) {
   switchAuthView('check-email');
 }
 
-// ── SIGN OUT ──────────────────────────────────────────────────
+// ── SIGN OUT
 function initSignOut() {
   const btn = aEl('btnSignOut');
   if (!btn) return;
@@ -453,7 +445,7 @@ function initSignOut() {
   });
 }
 
-// ── ENTRAR / SAIR DO APP CONFORME SESSÃO ─────────────────────
+// ── ENTRAR / SAIR DO APP CONFORME SESSÃO
 function populateProfile(user) {
   if (!user) return;
   const meta = user.user_metadata || {};
@@ -509,7 +501,7 @@ function hideBootLoader() {
   if (boot) boot.hidden = true;
 }
 
-// ── i18n LOCAL (fallback caso as chaves ainda não existam em i18n.js) ──
+// ── i18n LOCAL (fallback caso as chaves ainda não existam em i18n.js)
 function t2(key) {
   if (typeof t === 'function') {
     const val = t(key);
@@ -544,7 +536,7 @@ const AUTH_FALLBACK_STRINGS = {
   strength_4: 'Muito forte',
 };
 
-// ── INIT ──────────────────────────────────────────────────────
+// ── INIT
 document.addEventListener('DOMContentLoaded', () => {
   initAuthNav();
   initPasswordToggles();
@@ -589,44 +581,52 @@ document.addEventListener('DOMContentLoaded', () => {
   const app = aEl('app');
   if (app) app.style.display = 'none';
 
-  // Checa sessão existente.
-  // OBS: getSession() usa a Web Locks API por baixo dos panos e pode ficar
-  // pendurado (nunca resolver) quando a aba carrega em segundo plano ou o
-  // navegador posterga a liberação do lock — bug conhecido do supabase-js.
-  // Sintoma: o app fica com display:none pra sempre até o usuário trocar de
-  // aba e voltar (o evento de foco força o lock a liberar). Por isso usamos
-  // uma flag `resolved` + timeout de segurança, e tratamos também o evento
-  // INITIAL_SESSION do onAuthStateChange, que costuma disparar mesmo quando
-  // getSession() trava.
-  let sessionResolved = false;
+/* Checa sessão existente.
+OBS: getSession() usa a Web Locks API por baixo dos panos e pode ficar pendurado (nunca resolver) quando a aba carrega em segundo plano ou navegador posterga a liberação do lock — bug conhecido do supabase-js.
+Sintoma: o app fica com display:none pra sempre até o usuário trocar de aba e voltar (o evento de foco força o lock a liberar).
+Estratégia: um timeout de segurança garante que a tela nunca fique travada em branco (mostra o gate de login como fallback). Mas isso é só um fallback de UI — se uma sessão válida chegar depois (via getSession() lento ou via onAuthStateChange), ainda entramos no app normalmente. `appEntered` evita chamar enterApp() mais de uma vez. */
+  let bootResolved = false;
+  let appEntered   = false;
 
-  const settleSession = (session) => {
-    if (sessionResolved) return;
-    sessionResolved = true;
+  const dismissBootLoader = () => {
+    if (bootResolved) return;
+    bootResolved = true;
     hideBootLoader();
-    if (session && session.user) {
-      enterApp(session.user);
-    } else {
-      aEl('authGate').hidden = false;
-    }
+  };
+
+  const tryEnterApp = (user) => {
+    dismissBootLoader();
+    if (!user || appEntered) return;
+    appEntered = true;
+    enterApp(user); // enterApp() já esconde o authGate
   };
 
   supabaseClient.auth.getSession().then(({ data }) => {
-    settleSession(data && data.session);
+    const session = data && data.session;
+    if (session && session.user) {
+      tryEnterApp(session.user);
+    } else {
+      dismissBootLoader();
+      const gate = aEl('authGate');
+      if (gate) gate.hidden = false;
+    }
   });
 
-  // Timeout de segurança: se getSession() não resolver em 4s, não deixa o
-  // app travado em branco — mostra o gate de login (o onAuthStateChange
-  // ainda pode chamar enterApp depois, se a sessão existir e destravar).
-  setTimeout(() => settleSession(null), 4000);
+// Timeout de segurança: se getSession() não resolver em 4s, não deixa o app travado em branco — mostra o gate de login. Não impede que uma sessão real chegue depois (getSession() lento ou onAuthStateChange).
+  setTimeout(() => {
+    dismissBootLoader();
+    if (!appEntered) {
+      const gate = aEl('authGate');
+      if (gate) gate.hidden = false;
+    }
+  }, 4000);
 
-  // Reage a login / logout / refresh de token em tempo real
+// Reage a login / logout / refresh de token em tempo real — inclusive como segunda via de entrada quando getSession() trava (INITIAL_SESSION costuma disparar mesmo nesse caso).
   supabaseClient.auth.onAuthStateChange((event, session) => {
     if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session && session.user) {
-      sessionResolved = true;
-      hideBootLoader();
-      enterApp(session.user);
+      tryEnterApp(session.user);
     } else if (event === 'SIGNED_OUT') {
+      appEntered = false;
       exitApp();
     }
   });

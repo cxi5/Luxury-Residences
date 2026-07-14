@@ -1,8 +1,4 @@
-/* ============================================================
-   LUXURY RESIDENCES — i18n SYSTEM
-   ============================================================ */
-
-// ── TRANSLATIONS ─────────────────────────────────────────────
+// ── TRANSLATIONS
 const TRANSLATIONS = {
   pt: {
     // months
@@ -193,7 +189,13 @@ const TRANSLATIONS = {
     svc_status_cancelled: 'Cancelado',
 
     // profile screen
-    profile_tier:       'Membro Gold · 4 estadias',
+    loyalty_tier_bronze:   'Bronze',
+    loyalty_tier_silver:   'Prata',
+    loyalty_tier_gold:     'Gold Member',
+    loyalty_tier_platinum: 'Platinum',
+    loyalty_stay_singular: 'estadia',
+    loyalty_stay_plural:   'estadias',
+    loyalty_max_tier:      'Nível máximo atingido',
     profile_account:    'Conta',
     profile_name_lbl:   'Nome completo',
     profile_email_lbl:  'Email',
@@ -476,7 +478,13 @@ const TRANSLATIONS = {
     svc_status_completed: 'Completed',
     svc_status_cancelled: 'Cancelled',
 
-    profile_tier:       'Gold Member · 4 stays',
+    loyalty_tier_bronze:   'Bronze',
+    loyalty_tier_silver:   'Silver',
+    loyalty_tier_gold:     'Gold Member',
+    loyalty_tier_platinum: 'Platinum',
+    loyalty_stay_singular: 'stay',
+    loyalty_stay_plural:   'stays',
+    loyalty_max_tier:      'Highest tier reached',
     profile_account:    'Account',
     profile_name_lbl:   'Full name',
     profile_email_lbl:  'Email',
@@ -569,7 +577,7 @@ const TRANSLATIONS = {
 
     sign_out: 'Sign out',
 
-    // ── ARIA LABELS (accessibility) ──
+    // ── ARIA LABELS (accessibility)
     aria_show_password:     'Show password',
     aria_back:               'Back',
     aria_close:               'Close',
@@ -586,7 +594,7 @@ const TRANSLATIONS = {
   },
 };
 
-// ── CURRENCY CONFIG ──────────────────────────────────────────
+// ── CURRENCY CONFIG
 const CURRENCIES = {
   BRL: { symbol: 'R$',  locale: 'pt-BR', decimals: 0 },
   KZ:  { symbol: 'Kz',  locale: 'pt-AO', decimals: 0 },
@@ -594,7 +602,7 @@ const CURRENCIES = {
   EUR: { symbol: '€',   locale: 'de-DE', decimals: 2 },
 };
 
-// ── COUNTRY LIST (código ISO + nome em pt/en) ─────────────────
+// ── COUNTRY LIST (código ISO + nome em pt/en)
 const COUNTRIES = [
   { code: 'BR', pt: 'Brasil',            en: 'Brazil' },
   { code: 'PT', pt: 'Portugal',          en: 'Portugal' },
@@ -631,7 +639,7 @@ const COUNTRIES = [
   { code: 'OTHER', pt: 'Outro',          en: 'Other' },
 ];
 
-// ── STATE — default EN ────────────────────────────────────────
+// ── STATE — default EN
 const i18nState = {
   language: localStorage.getItem('app-lang') || 'pt',
   currency: localStorage.getItem('app-currency') || 'KZ',
@@ -643,9 +651,61 @@ function t(key) {
   return key in dict ? dict[key] : (TRANSLATIONS.en[key] || key);
 }
 
+/* TAXAS DE CÂMBIO (conversão real — Kz é a moeda-base armazenada) ── Todo valor monetário no app (preços de quarto, reservas) é guardado em Kz no banco. Antes, trocar de moeda só reformatava o MESMO número com símbolo diferente (Kz 500 virava "US$ 500", que é uma conversão errada em ~900x). Agora busca taxas reais e converte de verdade.
+Fonte: Exchange Rate API, endpoint de acesso livre, sem chave, mas os termos de uso exigem atribuição — ver link no seletor de moeda do perfil. https://www.exchangerate-api.com/docs/free
+A API só atualiza 1x/dia, então o cache faz 24h no localStorage pra não bater na rede toda hora à toa. */
+const FX_CACHE_KEY  = 'app-fx-rates';
+const FX_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+
+i18nState.rates = { KZ: 1 }; // Kz é a base — sempre 1:1, dispensa rede
+
+async function refreshExchangeRates() {
+  try {
+    const cachedRaw = localStorage.getItem(FX_CACHE_KEY);
+    if (cachedRaw) {
+      const cached = JSON.parse(cachedRaw);
+      if (cached.rates && (Date.now() - cached.fetchedAt) < FX_MAX_AGE_MS) {
+        i18nState.rates = { KZ: 1, ...cached.rates };
+        return;
+      }
+    }
+  } catch (e) { /* cache corrompido — ignora e busca de novo */ }
+
+  try {
+    const res  = await fetch('https://open.er-api.com/v6/latest/AOA');
+    const json = await res.json();
+    if (json.result !== 'success' || !json.rates) throw new Error('resposta inválida da API de câmbio');
+
+    const rates = { USD: json.rates.USD, EUR: json.rates.EUR, BRL: json.rates.BRL };
+    i18nState.rates = { KZ: 1, ...rates };
+    localStorage.setItem(FX_CACHE_KEY, JSON.stringify({ rates, fetchedAt: Date.now() }));
+
+    // Se o hóspede já estava vendo preços numa moeda estrangeira antes da taxa chegar, re-renderiza agora que temos o valor real pra mostrar.
+    if (i18nState.currency !== 'KZ') {
+      if (typeof renderRooms === 'function') renderRooms();
+      if (typeof renderStays === 'function') renderStays();
+    }
+  } catch (e) {
+    console.warn('[i18n] Não foi possível atualizar as taxas de câmbio:', e);
+  }
+}
+
 function formatCurrency(value) {
-  const cfg = CURRENCIES[i18nState.currency] || CURRENCIES.KZ;
-  const num = Number(value).toLocaleString(cfg.locale, {
+  const cfg  = CURRENCIES[i18nState.currency] || CURRENCIES.KZ;
+  const rate = i18nState.rates && i18nState.rates[i18nState.currency];
+
+  // Sem taxa real disponível ainda (rede lenta/falhou, sem cache): melhor mostrar o valor verdadeiro em Kz do que inventar uma conversão errada com o símbolo trocado.
+  if (i18nState.currency !== 'KZ' && !rate) {
+    const kzCfg = CURRENCIES.KZ;
+    const num = Number(value).toLocaleString(kzCfg.locale, {
+      minimumFractionDigits: kzCfg.decimals,
+      maximumFractionDigits: kzCfg.decimals,
+    });
+    return `${kzCfg.symbol} ${num}`;
+  }
+
+  const converted = Number(value) * (rate || 1);
+  const num = converted.toLocaleString(cfg.locale, {
     minimumFractionDigits: cfg.decimals,
     maximumFractionDigits: cfg.decimals,
   });
@@ -659,7 +719,7 @@ function formatDate(str) {
   return `${d} ${months[parseInt(m) - 1]} ${y}`;
 }
 
-// ── COUNTRY SELECT: preenche/traduz as opções mantendo a seleção ──
+// ── COUNTRY SELECT: preenche/traduz as opções mantendo a seleção
 function populateCountrySelect(selectId) {
   const select = document.getElementById(selectId);
   if (!select) return;
@@ -692,7 +752,7 @@ function populateCountrySelect(selectId) {
   if (previousValue) select.value = previousValue;
 }
 
-// ── APPLY TRANSLATIONS TO DOM ────────────────────────────────
+// ── APPLY TRANSLATIONS TO DOM
 function applyI18n() {
   const lang = i18nState.language;
 
@@ -786,7 +846,8 @@ function applyI18n() {
   setText('btnSendService','srp_confirm');
 
   // Profile
-  setQText('.profile-tier', 'profile_tier');
+  // Profile tier line (Gold Member · N estadias) é calculado em
+  // renderLoyalty() a partir de dados reais — não é mais texto estático.
   const psSections = document.querySelectorAll('.ps-title');
   const psTitleKeys = ['profile_account','profile_prefs','profile_loyalty','profile_support'];
   psSections.forEach((el, i) => { if (psTitleKeys[i]) el.textContent = t(psTitleKeys[i]); });
@@ -803,9 +864,8 @@ function applyI18n() {
   prefItems.forEach((el, i) => { if (prefKeys[i]) el.textContent = t(prefKeys[i]); });
 
   // Loyalty
-  setQText('.lc-legend span:last-child', 'loyalty_total');
-  const ptsToEl = document.querySelector('.lc-legend span:first-child');
-  if (ptsToEl) ptsToEl.textContent = `600 ${t('loyalty_pts_to')}`;
+  // Legenda de progresso da fidelidade (pts pro próximo nível) é
+  // calculada em renderLoyalty() a partir de dados reais.
 
   // Support items
   const suppItems = psItems[3] ? psItems[3].querySelectorAll('.ps-item > span:first-child') : [];
@@ -942,6 +1002,13 @@ function setCurrency(currency) {
   if (!CURRENCIES[currency]) return;
   i18nState.currency = currency;
   localStorage.setItem('app-currency', currency);
+  if (currency !== 'KZ' && !(i18nState.rates && i18nState.rates[currency])) {
+    refreshExchangeRates();
+  }
   if (typeof renderRooms === 'function') renderRooms();
   if (typeof renderStays === 'function') renderStays();
+  if (typeof state !== 'undefined' && state.activeRoom && typeof openBookingFlow === 'function'
+      && el('screen-book') && el('screen-book').classList.contains('active')) {
+    openBookingFlow(state.activeRoom);
+  }
 }

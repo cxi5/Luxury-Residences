@@ -1,7 +1,7 @@
 {
   "name": "Luxury Residences",
   "short_name": "LuxeStay",
-  "description": "Reservas e experiências premium — Luanda",
+  "description": "Reservas e experiências— Luanda",
   "start_url": "./index.html",
   "display": "standalone",
   "orientation": "portrait",

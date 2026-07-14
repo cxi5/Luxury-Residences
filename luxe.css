@@ -470,6 +470,47 @@ input, select, textarea { font-family: inherit; }
   color: var(--text);
 }
 
+.help-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.help-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 4px 16px;
+}
+
+.help-item summary {
+  padding: 14px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  list-style: none;
+}
+
+.help-item summary::-webkit-details-marker { display: none; }
+
+.help-item summary::after {
+  content: '+';
+  float: right;
+  color: var(--gold);
+  font-weight: 400;
+}
+
+.help-item[open] summary::after { content: '−'; }
+
+.help-item p {
+  font-size: 13px;
+  color: var(--text-2);
+  line-height: 1.5;
+  padding-bottom: 16px;
+}
+
 .back-btn {
   width: 34px; height: 34px;
   border: 1px solid var(--border);
@@ -1583,6 +1624,16 @@ input, select, textarea { font-family: inherit; }
   align-items: center;
   justify-content: space-between;
 }
+
+.fx-attribution {
+  font-size: 10px;
+  color: var(--text-3);
+  text-align: right;
+  padding: 2px 16px 4px;
+}
+
+.fx-attribution a { color: var(--text-3); text-decoration: underline; }
+.fx-attribution a:hover { color: var(--gold); }
 
 .ps-select {
   background: var(--surface-2);

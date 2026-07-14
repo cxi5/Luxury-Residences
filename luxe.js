@@ -1,8 +1,4 @@
-/* ============================================================
-   LUXURY RESIDENCES — GUEST APP SCRIPT
-   ============================================================ */
-
-// ── DATA ──────────────────────────────────────────────────────
+// GUEST APP SCRIPT - DATA
 const ROOMS_DATA = [
   {
     id: 101,
@@ -19,12 +15,8 @@ const ROOMS_DATA = [
     imgDetail: 'images/suite-presidencial-01.jpg',
     desc: 'A suite mais exclusiva do hotel, com sala de estar separada, varanda privativa e vista panorâmica do oceano. Decoração contemporânea com toques de arte angolana selecionada. Banheira de imersão e amenidades Hermès.',
     amenities: ['Varanda Privativa', 'Banheira Imersão', 'Sala de Estar', 'Minibar Premium', 'Smart TV 75"', 'Wi-Fi 1Gbps', 'Butler Exclusivo', 'Chegada VIP'],
-    rating: 4.9,
-    reviews: [
-      { author: 'James K.', date: '2026-05-12', rating: 5, text: 'Absolutely flawless. The butler service was impeccable and the ocean view took our breath away every morning.' },
-      { author: 'Mariana F.', date: '2026-04-03', rating: 5, text: 'A experiência mais luxuosa que já tive. O banheiro com banheira de imersão é simplesmente incrível.' },
-      { author: 'Chen W.', date: '2026-03-18', rating: 5, text: 'Worth every penny. The VIP arrival and dedicated butler made us feel like royalty from the moment we stepped in.' },
-    ],
+    rating: null, // preenchido de verdade pelo Supabase em loadAppData(
+    reviews: [],
     gallery: [
       { url: 'images/suite-presidencial-01.jpg', caption: 'Vista geral da suíte' },
       { url: 'images/suite-presidencial-02.jpg', caption: 'Varanda privativa com vista mar' },
@@ -48,11 +40,8 @@ const ROOMS_DATA = [
     imgDetail: 'images/master-deluxe-01.jpg',
     desc: 'Elegância e conforto com cama king-size, decoração sofisticada e vista para as piscinas privativas. Perfeito para casais em busca de privacidade e requinte na medida certa.',
     amenities: ['Cama King-size', 'Smart TV 65"', 'Minibar', 'Roupão Hermès', 'Wi-Fi Premium', 'Café da Manhã Incluso'],
-    rating: 4.7,
-    reviews: [
-      { author: 'Sofia L.', date: '2026-05-20', rating: 5, text: 'Perfect room for a romantic getaway. The king bed is incredibly comfortable and the pool view is stunning at night.' },
-      { author: 'Ricardo A.', date: '2026-04-15', rating: 4, text: 'Ótimo quarto, muito bem decorado. Pequena ressalva: o minibar poderia ter mais opções de bebidas locais.' },
-    ],
+    rating: null,
+    reviews: [],
     gallery: [
       { url: 'images/master-deluxe-01.jpg', caption: 'Quarto com cama king-size' },
       { url: 'images/master-deluxe-02.jpg', caption: 'Vista para as piscinas privativas' },
@@ -71,17 +60,13 @@ const ROOMS_DATA = [
     area: '68m²',
     floor: '12º andar',
     view: 'Vista Mar Frontal',
-    status: 'available', // real availability now comes from ROOM_BOOKINGS / state.stays
+    status: 'available',
     img: 'images/suite-ocean-view-01.jpg',
     imgDetail: 'images/suite-ocean-view-01.jpg',
     desc: 'Vista frontal para o Oceano Atlântico a partir do 12º andar. Arquitetura aberta que convida o mar para dentro do ambiente. Uma experiência visual inesquecível ao amanhecer.',
     amenities: ['Vista Frontal Mar', 'Varanda Ampla', 'Ducha Italiana', 'Escrivaninha', 'Smart TV 70"', 'Frigobar Encastrado'],
-    rating: 4.8,
-    reviews: [
-      { author: 'Aiko T.', date: '2026-06-01', rating: 5, text: 'Watching the sunrise over the Atlantic from bed is something I will never forget. This room is pure magic.' },
-      { author: 'Lucas M.', date: '2026-05-08', rating: 5, text: 'Vista incrível, quarto espaçoso e limpo. O duche italiano é um diferencial muito bom.' },
-      { author: 'Hannah B.', date: '2026-03-30', rating: 4, text: 'Great suite, the open architecture really brings the ocean inside. Would have liked a bathtub option though.' },
-    ],
+    rating: null,
+    reviews: [],
     gallery: [
       { url: 'images/suite-ocean-view-01.jpg', caption: 'Vista frontal para o Oceano Atlântico' },
       { url: 'images/suite-ocean-view-02.jpg', caption: 'Varanda ampla com vista mar' },
@@ -105,11 +90,8 @@ const ROOMS_DATA = [
     imgDetail: 'images/penthouse-01.jpg',
     desc: 'O cume da experiência. Dois andares, piscina privativa aquecida, terraço panorâmico com vista de 360° da cidade e do mar. Inclui chef privativo e serviço de mordomo 24 horas.',
     amenities: ['Piscina Privativa', 'Terraço 360°', 'Chef Privativo', 'Mordomo 24h', '2 Suítes Master', 'Sala Gourmet', 'Adega Climatizada', 'Transfer Helicóptero'],
-    rating: 5.0,
-    reviews: [
-      { author: 'Viktor R.', date: '2026-05-28', rating: 5, text: 'There are no words. The private pool at sunset, the private chef, the 360° view. This is the pinnacle of hospitality.' },
-      { author: 'Isabela C.', date: '2026-04-20', rating: 5, text: 'Comemoramos nosso aniversário aqui e foi perfeito em cada detalhe. O chef privativo preparou um jantar inesquecível no terraço.' },
-    ],
+    rating: null,
+    reviews: [],
     gallery: [
       { url: 'images/penthouse-01.jpg', caption: 'Terraço panorâmico 360°' },
       { url: 'images/penthouse-02.jpg', caption: 'Piscina privativa aquecida' },
@@ -133,11 +115,8 @@ const ROOMS_DATA = [
     imgDetail: 'images/suite-romantica-01.jpg',
     desc: 'Pensada para momentos especiais. Decoração intimista com iluminação cênica, banheira para dois com pétalas de rosa na chegada, champagne de boas-vindas e cardápio afrodisíaco exclusivo.',
     amenities: ['Banheira para Dois', 'Champagne Chegada', 'Decoração Romântica', 'Jantar Privativo', 'Vista Jardim Zen', 'Aromaterapia'],
-    rating: 4.6,
-    reviews: [
-      { author: 'Diego P.', date: '2026-05-14', rating: 5, text: 'My partner was completely surprised. Rose petals, champagne, candlelight — everything was perfectly arranged. Worth every cent.' },
-      { author: 'Fernanda S.', date: '2026-04-08', rating: 4, text: 'Muito romântico e acolhedor. O jardim zen visto da varanda cria uma paz única. Recomendo para aniversários.' },
-    ],
+    rating: null,
+    reviews: [],
     gallery: [
       { url: 'images/suite-romantica-01.jpg', caption: 'Quarto com decoração romântica' },
       { url: 'images/suite-romantica-02.jpg', caption: 'Banheira para dois com pétalas de rosa' },
@@ -148,13 +127,9 @@ const ROOMS_DATA = [
   },
 ];
 
-// Real per-date bookings for ALL guests (not just the current one), used to
-// decide availability. Populated from the `room_occupancy` view in Supabase
-// (see refreshOccupancy()) — no personal data, just room_id + dates.
-// Keyed by the room's numeric `legacy_id` to match ROOMS_DATA[i].id.
 const ROOM_BOOKINGS = {};
 
-// SERVICE_NAMES are now resolved via t() at runtime
+// SERVICE_NAMES não é resolvido via t() at runtime
 function getServiceName(key) {
   const map = {
     spa:       'svc_spa',
@@ -167,7 +142,7 @@ function getServiceName(key) {
   return map[key] ? t(map[key]) : key;
 }
 
-// ── STATE ────────────────────────────────────────────────────
+// STATE
 const state = {
   checkin:      null,
   checkout:     null,
@@ -185,10 +160,7 @@ const state = {
   dataLoaded:   false, // vira true quando loadAppData() completa com sucesso
 };
 
-// (Real stays are loaded from Supabase in loadAppData(), see below —
-// no more demo seed / localStorage bootstrap for bookings.)
-
-// ── HELPERS ──────────────────────────────────────────────────
+// HELPERS
 const el   = id => document.getElementById(id);
 const q    = s  => document.querySelector(s);
 const qa   = s  => document.querySelectorAll(s);
@@ -203,10 +175,8 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;');
 }
 
-// Monta o atributo srcset a partir da imagem original (images/nome.jpg),
-// usando as variantes -480w.jpg / -800w.jpg geradas junto com o arquivo
-// original de 1200px. Assim cada dispositivo baixa só o tamanho que precisa
-// em vez da mesma imagem de 1200px em qualquer tela.
+// Monta o atributo srcset a partir da imagem original (images/nome.jpg), usando as variantes -480w.jpg / -800w.jpg geradas junto com o arquivo original de 1200px. Assim cada dispositivo baixa só o tamanho que precisa, em vez da mesma imagem de 1200px em qualquer tela.
+
 function buildSrcset(url) {
   const dot = url.lastIndexOf('.');
   if (dot === -1) return '';
@@ -232,10 +202,7 @@ function fmtDateTime(isoStr) {
   return `${dateStr} · ${timeStr}`;
 }
 
-// ── PERSISTENCE ──────────────────────────────────────────────
-// Rooms, bookings and reviews now live in Supabase (source of truth).
-// localStorage is kept only for small device-local UI prefs that have
-// no matching table (favorites, notification toggles).
+// ── PERSISTENCE - Rooms, bookings and reviews now live in Supabase (source of truth). localStorage is kept only for small device-local UI prefs that have no matching table (favorites, notification toggles).
 const STORAGE_KEY = 'luxe-app-prefs';
 
 function persistPrefs() {
@@ -247,7 +214,7 @@ function persistPrefs() {
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
   } catch (e) {
-    // Storage unavailable or full — fail silently, app keeps working in-memory
+    
   }
 }
 
@@ -272,11 +239,7 @@ function restorePrefs() {
   }
 }
 
-// Escolhe, para cada quarto, os campos "ativos" (name/type/view/floor/desc/
-// amenities/gallery) conforme o idioma atual — com fallback para português
-// caso a tradução em inglês ainda não tenha sido preenchida no banco.
-// Chamada uma vez após carregar os dados, e de novo sempre que o idioma
-// muda (ver setLanguage() em i18n.js).
+// Escolhe, para cada quarto, os campos "ativos" (name/type/view/floor/desc/amenities/gallery) conforme o idioma atual — com fallback para português. Caso a tradução em inglês ainda não tenha sido preenchida no banco. Chama uma vez após carregar os dados, e de novo sempre que o idioma muda (ver setLanguage() em i18n.js).
 function localizeRoomFields() {
   const isEn = (typeof i18nState !== 'undefined' && i18nState.language === 'en');
   ROOMS_DATA.forEach(room => {
@@ -290,8 +253,7 @@ function localizeRoomFields() {
   });
 }
 
-// ── SUPABASE DATA LOADING ────────────────────────────────────
-// Called by auth.js (window.RotaApp.init) once a guest session exists.
+// ── SUPABASE DATA LOADING - Called by auth.js (window.RotaApp.init) once a guest session exists.
 async function loadAppData(user) {
   state.currentUser = user;
 
@@ -320,9 +282,7 @@ async function loadAppData(user) {
       rating: Number(row.rating),
       reviews: [],
 
-      // Conteúdo bilíngue — guardamos as duas versões e localizeRoomFields()
-      // escolhe qual delas fica "ativa" (name/type/view/floor/desc/amenities/gallery)
-      // conforme o idioma atual. Ver localizeRoomFields() logo abaixo.
+// Conteúdo bilíngue — guardei as duas versões e localizeRoomFields() (mais tarde escolho qual delas fica "ativa" (name/type/view/floor/desc/amenities/gallery). conforme o idioma atual. Ver localizeRoomFields() logo abaixo.
       name_pt: row.name,             name_en: row.name_en,
       type_pt: row.type,             type_en: row.type_en,
       view_pt: row.view,             view_en: row.view_en,
@@ -394,10 +354,6 @@ async function loadAppData(user) {
   }));
 }
 
-// Refreshes ROOM_BOOKINGS from the room_occupancy view (all guests' confirmed
-// dates, no personal data). Note: this naturally includes the current
-// guest's own dates too, which getRoomBookings() also adds separately from
-// state.stays — harmless duplication for the overlap checks below.
 async function refreshOccupancy() {
   const { data: occRows } = await supabaseClient
     .from('room_occupancy')
@@ -451,10 +407,7 @@ function addDays(dateStr, n) {
   return d.toISOString().split('T')[0];
 }
 
-// ── AVAILABILITY (per-date, not a fixed flag) ──────────────────
-// Combines seeded "other guests" bookings (ROOM_BOOKINGS) with the
-// current guest's own confirmed reservations (state.stays) to decide
-// whether a room is free for a specific check-in/check-out window.
+// ── AVAILABILITY (per-date, not a fixed flag) - Combines seeded "other guests" bookings (ROOM_BOOKINGS) with the current guest's own confirmed reservations (state.stays) to decide whether a room is free for a specific check-in/check-out window.
 function getRoomBookings(roomId) {
   const external = ROOM_BOOKINGS[roomId] || [];
   const own = state.stays
@@ -472,8 +425,7 @@ function isRoomAvailable(roomId, ci, co) {
   return !getRoomBookings(roomId).some(b => ci < b.checkout && b.checkin < co);
 }
 
-// Finds the next free check-in date for a room, starting from a given date.
-// Used to tell the guest when an unavailable room opens up again.
+// Finds the next free check-in date for a room, starting from a given date. Used to tell the guest when an unavailable room opens up again.
 function nextAvailableDate(roomId, fromDate) {
   let probe = fromDate;
   for (let i = 0; i < 365; i++) {
@@ -484,7 +436,7 @@ function nextAvailableDate(roomId, fromDate) {
   return null;
 }
 
-// ── FAVORITES ────────────────────────────────────────────────
+// ── FAVORITES
 function isFavorite(roomId) {
   return state.favorites.includes(roomId);
 }
@@ -507,7 +459,7 @@ function toast(msg, type = '') {
   toastT = setTimeout(() => box.classList.remove('show'), 3000);
 }
 
-// ── SCREEN NAVIGATION ────────────────────────────────────────
+// ── SCREEN NAVIGATION
 function goTo(screenName) {
   qa('.screen').forEach(s => s.classList.remove('active'));
   qa('.nav-btn').forEach(b => b.classList.remove('active'));
@@ -526,7 +478,7 @@ function goBack(screenName) {
   goTo(screenName || 'discover');
 }
 
-// ── HERO IMAGE ROTATION ──────────────────────────────────────
+// ── HERO IMAGE ROTATION
 const heroImages = [
   'images/suite-ocean-view-01.jpg',
   'images/penthouse-01.jpg',
@@ -541,11 +493,8 @@ function rotateHero() {
     img.style.opacity = '0';
     img.style.transition = 'opacity 0.8s ease';
     setTimeout(() => {
-      // O atributo srcset (usado no HTML pra performance no load inicial)
-      // tem prioridade sobre `src` na escolha de imagem responsiva do browser.
-      // Sem removê-lo aqui, o browser ignora as trocas de `src` abaixo e
-      // fica sempre reexibindo a variante da imagem original — por isso
-      // a rotação nunca saía da primeira foto.
+
+// O atributo srcset (usado no HTML pra performance no load inicial) tem prioridade sobre `src` na escolha de imagem responsiva do browser, sem removê-lo aqui, o browser ignora as trocas de `src` abaixo e fica sempre reexibindo a variante da imagem original. Sem isso a rotação fica presa na primeira foto.
       img.removeAttribute('srcset');
       img.removeAttribute('sizes');
       img.src = heroImages[heroIdx];
@@ -554,7 +503,7 @@ function rotateHero() {
   }
 }
 
-// ── RENDER ROOMS ─────────────────────────────────────────────
+// ── RENDER ROOMS
 function renderRooms(filter) {
   if (filter !== undefined) state.filter = filter;
   const container = el('roomCards');
@@ -671,7 +620,7 @@ function renderRooms(filter) {
   });
 }
 
-// ── ROOM DETAIL ──────────────────────────────────────────────
+// ── ROOM DETAIL
 function openRoomDetail(roomId) {
   const room = ROOMS_DATA.find(r => r.id === roomId);
   if (!room) return;
@@ -802,7 +751,7 @@ function openRoomDetail(roomId) {
   goTo('rooms');
 }
 
-// ── GALLERY ──────────────────────────────────────────────────
+// ── GALLERY
 function initGallery(gallery) {
   const track = el('galleryTrack');
   if (!track) return;
@@ -853,7 +802,7 @@ function initGallery(gallery) {
   });
 }
 
-// ── GALLERY LIGHTBOX (fullscreen viewer) ──────────────────────
+// ── GALLERY LIGHTBOX (fullscreen viewer)
 const lightboxState = { gallery: [], current: 0 };
 
 function openLightbox(gallery, startIndex) {
@@ -931,17 +880,14 @@ function setupLightbox() {
   });
 }
 
-// ── BOOKING FLOW ─────────────────────────────────────────────
+// ── BOOKING FLOW
 function openBookingFlow(roomId, prefill) {
   const room = ROOMS_DATA.find(r => r.id === roomId);
   if (!room) return;
 
   const ci = state.checkin  || today();
   const co = state.checkout || tomorrow();
-  // Garante que o state reflita as datas efetivamente em uso nesta tela,
-  // mesmo quando o hóspede chegou aqui sem passar pela busca (fallback
-  // hoje/amanhã) — assim o modal de datas abre pré-preenchido e a edição
-  // de noites funciona a partir daqui também.
+// Garante que o state reflita as datas efetivamente em uso nesta tela, mesmo quando o hóspede chegou aqui sem passar pela busca (fallback, hoje/amanhã) — assim o modal de datas abre pré-preenchido e a edição de noites funciona a partir daqui também.
   state.checkin  = ci;
   state.checkout = co;
 
@@ -956,8 +902,7 @@ function openBookingFlow(roomId, prefill) {
   const taxes    = Math.round(subtotal * 0.12);
   const total    = subtotal + taxes;
 
-  // Pré-preenche os dados do hóspede com o usuário logado (Supabase Auth),
-  // ou com o que já foi digitado antes (ex: ao voltar da tela de pagamento).
+  // Pré-preenche os dados do hóspede com o usuário logado, o que já foi digitado antes (ex: ao voltar da tela de pagamento).
   const meta = (state.currentUser && state.currentUser.user_metadata) || {};
   const guestName  = (prefill && prefill.name)  || meta.full_name || '';
   const guestEmail = (prefill && prefill.email) || (state.currentUser && state.currentUser.email) || '';
@@ -1071,7 +1016,7 @@ function openBookingFlow(roomId, prefill) {
   goTo('book');
 }
 
-// ── PAYMENT STEP ──────────────────────────────────────────────
+// ── PAYMENT STEP
 const BANK_ACCOUNTS = {
   bai:      { label: 'BAI — Banco Angolano de Investimentos', iban: 'AO06 0040 0000 8817 3629 1014 7' },
   bfa:      { label: 'BFA — Banco de Fomento Angola',          iban: 'AO06 0006 0000 4127 8853 1017 3' },
@@ -1188,8 +1133,7 @@ function renderPayPanel(method, room, ci, co, nights, total, guest) {
   }
 }
 
-// Deterministic pseudo-QR pattern (visual only, not scannable) so the demo
-// never depends on an external QR-generation API.
+// Deterministic pseudo-QR pattern (visual only, not scannable) so the demo, never depends on an external QR-generation API.
 function generateFakeQR(seed) {
   let h = 0;
   for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) >>> 0;
@@ -1235,8 +1179,7 @@ async function completeBooking(room, ci, co, nights, total, guest) {
   const user = state.currentUser;
   if (!user) { toast(t('auth_err_email_required') || 'Sessão expirada. Entre novamente.'); return false; }
 
-  // Availability for these dates is now derived automatically from
-  // state.stays (see getRoomBookings/isRoomAvailable) — no flag to flip.
+  // Availability for these dates is now derived automatically from, state.stays (see getRoomBookings/isRoomAvailable) — no flag to flip.
 
   const { data, error } = await supabaseClient
     .from('bookings')
@@ -1289,7 +1232,7 @@ async function completeBooking(room, ci, co, nights, total, guest) {
   return true;
 }
 
-// ── DATES MODAL ───────────────────────────────────────────────
+// ── DATES MODAL
 function openDatesModal() {
   const ciInp = el('inputCheckin');
   const coInp = el('inputCheckout');
@@ -1330,10 +1273,7 @@ function confirmDates() {
   closeModal('modalDates');
   renderRooms();
 
-  // Se o modal foi aberto a partir do ecrã de reserva (hóspede mudando
-  // as noites ali mesmo), reconstrói esse ecrã com o novo cálculo em vez
-  // de deixar o resumo de preço/noites desatualizado — preservando os
-  // dados do formulário já preenchidos.
+  // Se o modal foi aberto a partir do ecrã de reserva (hóspede mudando as noites ali mesmo), reconstrói esse ecrã com o novo cálculo em vez de deixar o resumo de preço/noites desatualizado — preservando os dados do formulário já preenchidos.
   const bookScreen = el('screen-book');
   if (state.activeRoom && bookScreen && bookScreen.classList.contains('active')) {
     const prefill = {
@@ -1346,7 +1286,7 @@ function confirmDates() {
   }
 }
 
-// ── GUESTS MODAL ──────────────────────────────────────────────
+// ── GUESTS MODAL
 function openGuestsModal() {
   el('cntAdults').textContent   = state.adults;
   el('cntChildren').textContent = state.children;
@@ -1361,7 +1301,7 @@ function confirmGuests() {
   closeModal('modalGuests');
 }
 
-// ── SEARCH ───────────────────────────────────────────────────
+// ── SEARCH
 function doSearch() {
   if (!state.checkin || !state.checkout) {
     openDatesModal();
@@ -1379,8 +1319,72 @@ function doSearch() {
   }, 100);
 }
 
-// ── STAYS ─────────────────────────────────────────────────────
+/* ── STAYS + LOYALTY (Fidelidade)
+Antes esses números eram fixos no HTML ("Gold Member · 4 estadias", "2.400 pts") — o mesmo pra qualquer hóspede, sem relação com o que a pessoa realmente reservou. Agora é 100% calculado a partir das reservas confirmadas reais (state.stays), com uma fórmula simples e transparente:
+100 pontos por noite de reserva confirmada.*/
+const POINTS_PER_NIGHT = 100;
+const LOYALTY_TIERS = [
+  { key: 'bronze',   min: 0,    labelKey: 'loyalty_tier_bronze' },
+  { key: 'silver',   min: 1000, labelKey: 'loyalty_tier_silver' },
+  { key: 'gold',     min: 2500, labelKey: 'loyalty_tier_gold' },
+  { key: 'platinum', min: 5000, labelKey: 'loyalty_tier_platinum' },
+];
+
+function computeLoyalty() {
+  const confirmedStays = state.stays.filter(s => s.status === 'confirmed');
+  const totalNights = confirmedStays.reduce((sum, s) => sum + (Number(s.nights) || 0), 0);
+  const points = totalNights * POINTS_PER_NIGHT;
+
+  let tierIdx = 0;
+  LOYALTY_TIERS.forEach((tier, i) => { if (points >= tier.min) tierIdx = i; });
+  const tier = LOYALTY_TIERS[tierIdx];
+  const nextTier = LOYALTY_TIERS[tierIdx + 1] || null;
+
+  return {
+    tier,
+    nextTier,
+    points,
+    staysCount: confirmedStays.length,
+    progressPct: nextTier
+      ? Math.max(0, Math.min(100, Math.round((points - tier.min) / (nextTier.min - tier.min) * 100)))
+      : 100,
+  };
+}
+
+function renderLoyalty() {
+  const data = computeLoyalty();
+  const tierLabel = t(data.tier.labelKey);
+  const stayWord = data.staysCount === 1 ? t('loyalty_stay_singular') : t('loyalty_stay_plural');
+
+  const tierHeaderEl = el('profileTier');
+  if (tierHeaderEl) tierHeaderEl.textContent = `${tierLabel} · ${data.staysCount} ${stayWord}`;
+
+  const lcTierEl = el('lcTier');
+  if (lcTierEl) lcTierEl.textContent = tierLabel;
+
+  const lcPointsEl = el('lcPoints');
+  if (lcPointsEl) lcPointsEl.textContent = `${data.points.toLocaleString('pt-AO')} pts`;
+
+  const lcBarFillEl = el('lcBarFill');
+  if (lcBarFillEl) lcBarFillEl.style.width = `${data.progressPct}%`;
+
+  const toNextEl = el('lcLegendToNext');
+  const totalEl  = el('lcLegendTotal');
+  if (toNextEl && totalEl) {
+    if (data.nextTier) {
+      const remaining = data.nextTier.min - data.points;
+      toNextEl.textContent = `${remaining.toLocaleString('pt-AO')} ${t('loyalty_pts_to')} ${t(data.nextTier.labelKey)}`;
+      totalEl.textContent  = `${data.nextTier.min.toLocaleString('pt-AO')} pts`;
+    } else {
+      toNextEl.textContent = t('loyalty_max_tier');
+      totalEl.textContent  = '';
+    }
+  }
+}
+
 function renderStays() {
+  renderLoyalty();
+
   const container = el('staysList');
   if (!container) return;
   container.innerHTML = '';
@@ -1453,8 +1457,7 @@ function renderStays() {
           return;
         }
 
-        // Removing the stay automatically frees those dates again
-        // (availability is derived from state.stays + room_occupancy)
+        // Removing the stay automatically frees those dates again (availability is derived from state.stays + room_occupancy)
         state.stays.splice(idx, 1);
         await refreshOccupancy();
         updateStaysDot();
@@ -1473,7 +1476,7 @@ function renderStays() {
   });
 }
 
-// ── EDIT BOOKING ─────────────────────────────────────────────
+// ── EDIT BOOKING
 
 function openEditModal(stay) {
   el('editBookingId').value   = stay.id;
@@ -1598,7 +1601,7 @@ async function saveEditBooking() {
   toast(t('toast_updated'));
 }
 
-// ── REVIEWS ─────────────────────────────────────────────────
+// ── REVIEWS
 let reviewRating = 5;
 
 function openReviewModal(roomId, roomName) {
@@ -1654,8 +1657,7 @@ async function submitReview() {
     text: data.text,
   });
 
-  // Optimistic local average — the source of truth is recalculated
-  // server-side by a trigger on room_reviews, and will reflect on next load.
+  // Optimistic local average — the source of truth is recalculated. Server-side by a trigger on room_reviews, and will reflect on next load.
   const avg = room.reviews.reduce((s, r) => s + r.rating, 0) / room.reviews.length;
   room.rating = Math.round(avg * 10) / 10;
 
@@ -1663,7 +1665,7 @@ async function submitReview() {
   toast(t('review_thanks'), 'gold');
 }
 
-// ── SERVICES ─────────────────────────────────────────────────
+// ── SERVICES
 function openServiceRequest(serviceKey) {
   state.activeService = serviceKey;
   el('srpTitle').textContent = `${t('srp_request')} ${getServiceName(serviceKey)}`;
@@ -1686,8 +1688,7 @@ async function sendServiceRequest() {
   const user = state.currentUser;
   if (!user) { toast(t('auth_err_email_required') || 'Sessão expirada. Entre novamente.'); return; }
 
-  // Vincula a uma reserva confirmada em andamento/futura, se houver —
-  // não é obrigatório (ex: hóspede solicitando algo antes do check-in).
+  // Vincula a uma reserva confirmada em andamento/futura, se houver — não é obrigatório (ex: hóspede solicitando algo antes do check-in).
   const relatedStay = state.stays.find(s => s.status === 'confirmed' && s.checkout >= today());
 
   const btn = el('btnSendService');
@@ -1761,7 +1762,7 @@ function renderServiceRequests() {
   `;
 }
 
-// ── PROFILE EDIT ─────────────────────────────────────────────
+// ── PROFILE EDIT
 function openEditProfileModal(field) {
   const user = state.currentUser;
   if (!user) return;
@@ -1819,9 +1820,7 @@ async function saveEditProfile() {
   btn.disabled = true;
   btn.textContent = '…';
 
-  // Email muda de rota: precisa de confirmação por link (Supabase Auth),
-  // então não mexemos em user_metadata pra isso — nome e telefone são
-  // dados de perfil simples e podem ser gravados direto.
+  // Email muda de rota: precisa de confirmação por link (Supabase Auth), então não toquei em user_metadata — nome e telefone são dados de perfil simples e podem ser gravados direto.
   const payload = field === 'email' ? { email: value } : { data: { [field]: value } };
   const { data, error } = await supabaseClient.auth.updateUser(payload);
 
@@ -1836,8 +1835,7 @@ async function saveEditProfile() {
   closeModal('modalEditProfile');
 
   if (field === 'email') {
-    // A troca só é efetivada depois que o hóspede confirma pelo link
-    // enviado ao novo endereço — por isso não atualizamos o display aqui.
+    // A troca só é efetivada depois que o hóspede confirma pelo link enviado ao novo endereço — por isso não atualizei o display aqui.
     toast(t('profile_email_sent'), 'gold');
     return;
   }
@@ -1857,7 +1855,7 @@ async function saveEditProfile() {
   toast(t('profile_updated'), 'gold');
 }
 
-// ── MODALS ───────────────────────────────────────────────────
+// ── MODALS
 let modalReturnFocus = null;
 
 function getFocusable(container) {
@@ -2054,14 +2052,24 @@ function setupListeners() {
   el('btnSaveEditProfile').addEventListener('click', saveEditProfile);
   el('btnCancelEditProfile').addEventListener('click', () => closeModal('modalEditProfile'));
   setupModalClose('modalEditProfile');
+
+  // Support section
+  el('btnHelpCenter').addEventListener('click', () => goTo('help'));
+  el('btnTalkConcierge').addEventListener('click', () => {
+    goTo('services');
+    openServiceRequest('concierge');
+  });
 }
 
-// ── INIT ──────────────────────────────────────────────────────
+// ── INIT
 document.addEventListener('DOMContentLoaded', () => {
   restorePrefs();
   applyI18n();       // translate all static DOM strings on load
   setupListeners();
   setInterval(rotateHero, 5000);
+
+  // Busca as taxas de câmbio reais em paralelo com o resto do boot — não trava nada, e formatCurrency() sabe lidar com "ainda não chegou".
+  if (typeof refreshExchangeRates === 'function') refreshExchangeRates();
 
   // Set date input constraints
   const ciInp = el('inputCheckin');
@@ -2081,15 +2089,9 @@ document.addEventListener('DOMContentLoaded', () => {
     currSel.addEventListener('change', e => setCurrency(e.target.value));
   }
 
-  // Rooms/bookings depend on a logged-in guest — auth.js calls
-  // window.RotaApp.init(user) once a Supabase session is confirmed.
-  //
-  // IMPORTANTE: loadAppData() faz queries ao Supabase sem timeout próprio.
-  // Se a conexão travar (comum em dados móveis instáveis, ou porque o
-  // navegador suspende requests pendentes de abas em segundo plano), a
-  // Promise nunca resolve nem rejeita — fica presa pra sempre, e os quartos
-  // nunca aparecem, sem nenhum erro no console. initAppDataWithRetry() põe
-  // um teto de tempo nisso e tenta de novo automaticamente.
+/* Rooms/bookings depend on a logged-in guest — auth.js callswindow.RotaApp.init(user) once a Supabase session is confirmed
+
+IMPORTANTE: loadAppData() faz queries ao Supabase sem timeout próprio. Se a conexão travar (comum em dados móveis instáveis, ou porque o navegador suspende requests pendentes de abas em segundo plano), a Promise nunca resolve nem rejeita — fica presa pra sempre, e os quartos nunca aparecem, sem nenhum erro no console. initAppDataWithRetry() põe um teto de tempo nisso e tenta de novo automaticamente.*/
   window.RotaApp = {
     init: async (user) => {
       state.dataLoaded = false;
@@ -2104,10 +2106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
   };
 
-  // Se o app voltar a ficar visível (usuário trocou de aba/app e voltou) e
-  // os dados ainda não carregaram, tenta de novo na hora — isso é
-  // exatamente o "conserto manual" que travar em segundo plano forçava o
-  // usuário a fazer, só que automático agora.
+// Se o app voltar a ficar visível (usuário trocou de aba/app e voltou) e os dados ainda não carregaram, tenta de novo na hora — isso é exatamente o "conserto manual" que travar em segundo plano forçava o usuário a fazer, só que automático agora.
   document.addEventListener('visibilitychange', () => {
     if (!document.hidden && state.currentUser && !state.dataLoaded) {
       initAppDataWithRetry(state.currentUser);
@@ -2116,9 +2115,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 });
 
-// Corre uma Promise contra um cronômetro — se o tempo estourar antes da
-// Promise original resolver, rejeita com um erro identificável, ao invés
-// de deixar a chamada pendurada pra sempre.
+// Corre uma Promise contra um cronômetro — se o tempo estourar antes da Promise original resolver, rejeita com um erro identificável, ao invés de deixar a chamada pendurada pra sempre.
 function withTimeout(promise, ms, label) {
   let timer;
   const timeout = new Promise((_, reject) => {
@@ -2127,14 +2124,8 @@ function withTimeout(promise, ms, label) {
   return Promise.race([promise, timeout]).finally(() => clearTimeout(timer));
 }
 
-// Carrega os dados do app com timeout + retry com backoff. Sem isso, uma
-// única query travada (rooms/reviews/bookings) deixava a tela de quartos
-// vazia pra sempre, sem erro nenhum — só "resolvia sozinha" se o usuário
-// trocasse de aba e voltasse (o que descongela requests suspensos pelo
-// navegador). Agora tentamos de novo sozinhos antes de precisar disso.
-// Mostra um estado de carregamento no grid de quartos enquanto os dados
-// não chegam — sem isso o usuário ficava olhando pra um espaço vazio sem
-// saber se estava carregando, travado, ou quebrado.
+// Carrega os dados do app com timeout + retry com backoff. Sem isso, uma única query travada (rooms/reviews/bookings) deixava a tela de quartos vazia pra sempre, sem erro nenhum — só "resolvia sozinha" se o usuário trocasse de aba e voltasse (o que descongela requests suspensos pelo navegador). Agora tentamos de novo sozinhos antes de precisar disso.
+// Mostra um estado de carregamento no grid de quartos enquanto os dados não chegam — sem isso o usuário ficava olhando pra um espaço vazio sem saber se estava carregando, travado, ou quebrado.
 function renderRoomsLoading(message) {
   const grid = el('roomCards');
   if (!grid) return;

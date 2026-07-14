@@ -164,7 +164,7 @@
 
         <label class="auth-check auth-check-terms">
           <input type="checkbox" id="signupTerms">
-          <span id="lblTerms">Concordo com os <a href="#" class="auth-link-inline">Termos</a> e a <a href="#" class="auth-link-inline">Privacidade</a></span>
+          <span id="lblTerms">Concordo com os <a href="termos.html" target="_blank" rel="noopener" class="auth-link-inline">Termos</a> e a <a href="privacidade.html" target="_blank" rel="noopener" class="auth-link-inline">Privacidade</a></span>
         </label>
         <span class="auth-field-err" id="errSignupTerms" style="margin-bottom:14px"></span>
 
@@ -396,7 +396,7 @@
     <div class="profile-hero">
       <div class="profile-avatar" id="profileAvatar">–</div>
       <h2 class="profile-name" id="profileName">—</h2>
-      <p class="profile-tier">Gold Member · 4 stays</p>
+      <p class="profile-tier" id="profileTier">—</p>
     </div>
 
     <div class="profile-sections">
@@ -434,6 +434,9 @@
             <option value="EUR">EUR — Euro</option>
           </select>
         </div>
+        <p class="fx-attribution">
+          Câmbio por <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Exchange Rate API</a>
+        </p>
         <div class="ps-item ps-toggle-item">
           <span>Notifications</span>
           <label class="toggle">
@@ -454,24 +457,24 @@
         <div class="ps-title">Loyalty</div>
         <div class="loyalty-card">
           <div class="lc-top">
-            <span class="lc-tier">Gold Member</span>
-            <span class="lc-points">2.400 pts</span>
+            <span class="lc-tier" id="lcTier">—</span>
+            <span class="lc-points" id="lcPoints">0 pts</span>
           </div>
-          <div class="lc-bar-bg"><div class="lc-bar-fill" style="width:60%"></div></div>
+          <div class="lc-bar-bg"><div class="lc-bar-fill" id="lcBarFill" style="width:0%"></div></div>
           <div class="lc-legend">
-            <span>600 pts to Platinum</span>
-            <span>3.000 pts</span>
+            <span id="lcLegendToNext">—</span>
+            <span id="lcLegendTotal">—</span>
           </div>
         </div>
       </div>
 
       <div class="profile-section">
         <div class="ps-title">Support</div>
-        <button class="ps-item">
+        <button class="ps-item" id="btnHelpCenter">
           <span>Help center</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M9 18l6-6-6-6"/></svg>
         </button>
-        <button class="ps-item">
+        <button class="ps-item" id="btnTalkConcierge">
           <span>Talk to concierge</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="14" height="14"><path d="M9 18l6-6-6-6"/></svg>
         </button>
@@ -479,6 +482,46 @@
           <span id="lblSignOut">Sign out</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- Help center -->
+  <div class="screen" id="screen-help">
+    <div class="subpage-header">
+      <button class="back-btn" data-back="profile" aria-label="Voltar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 18l-6-6 6-6"/></svg>
+      </button>
+      <span>Help center</span>
+    </div>
+    <div class="help-content">
+      <details class="help-item" open>
+        <summary>Como faço uma reserva?</summary>
+        <p>Escolha as datas e o número de hóspedes na tela Descobrir, selecione um quarto disponível e siga o fluxo de reserva até confirmar. A reserva fica visível em "Estadias" assim que confirmada.</p>
+      </details>
+      <details class="help-item">
+        <summary>Posso mudar as datas depois de reservar?</summary>
+        <p>Sim. Na tela de finalização da reserva, toque no bloco de check-in/check-out pra escolher novas datas antes de confirmar. Depois de confirmada, entre em contato pelo Concierge pra alterações.</p>
+      </details>
+      <details class="help-item">
+        <summary>Como cancelo uma estadia?</summary>
+        <p>Em "Estadias", abra a reserva confirmada e use a opção de cancelamento. Reservas já com checkout no passado não podem mais ser canceladas.</p>
+      </details>
+      <details class="help-item">
+        <summary>Como funcionam os pontos de fidelidade?</summary>
+        <p>Você acumula pontos por noite em cada reserva confirmada. O nível (Bronze, Prata, Gold, Platinum) sobe automaticamente conforme o total de pontos aumenta — dá pra acompanhar na tela de Perfil.</p>
+      </details>
+      <details class="help-item">
+        <summary>Os preços mudam conforme a moeda selecionada?</summary>
+        <p>Sim. Ao trocar a moeda em Perfil → Preferências, os valores são convertidos usando taxas de câmbio reais, atualizadas periodicamente. O valor de referência do hotel é sempre em Kwanza (Kz).</p>
+      </details>
+      <details class="help-item">
+        <summary>Como solicito serviços do hotel (Spa, Concierge, etc.)?</summary>
+        <p>Na aba Serviços, escolha o serviço desejado, preencha data/horário e observações, e confirme. A solicitação fica registrada em "Minhas solicitações" com o status atualizado pela equipe do hotel.</p>
+      </details>
+      <details class="help-item">
+        <summary>Não encontrei o que precisava. E agora?</summary>
+        <p>Fale diretamente com o Concierge pelo botão "Talk to concierge" em Perfil, ou abra uma solicitação de Concierge na aba Serviços — a equipe responde por lá.</p>
+      </details>
     </div>
   </div>
 
