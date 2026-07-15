@@ -38,7 +38,7 @@ Backend temporário (testes): [Supabase](https://supabase.com) (Postgres + Auth 
 
 Hospedagem: Cloudflare Pages, Deploy estático, CDN global, HTTPS grátis.
 
-PWA: `manifest.json` + Service Worker (`sw.js`) Instalável, cache-first para assets estáticos, funciona parcialmente offline.
+PWA: `manifest.json` + Service Worker (`sw.js`). Instalável, funciona parcialmente offline. Estratégia por tipo de recurso: HTML/JS/CSS/JSON usam network-first (busca sempre a versão mais recente quando há internet, cai pro cache se offline); imagens e ícones usam cache-first; fontes do Google Fonts usam stale-while-revalidate.
 
 i18n: Sistema próprio (`i18n.js`). Dicionário PT/EN simples, sem overhead de biblioteca para um app de 2 idiomas.
 
@@ -59,8 +59,7 @@ no client-side); a segurança real vem das políticas no banco, não de
 esconder a chave.
 
 **PWA em vez de app nativo**
-Instalável via navegador (`manifest.json`), com um Service Worker que faz cache-first de assets estáticos (HTML/CSS/JS/imagens) e
-stale-while-revalidate para fontes do Google Fonts. Cobre o caso de uso
+Instalável via navegador (`manifest.json`), com um Service Worker que aplica cache diferenciado por tipo de asset (ver Stack acima). Cobre o caso de uso
 principal (revisitar o app, carregamento rápido) sem a complexidade de publicar em App Store/Play Store.
 
 **Imagens hospedadas localmente**
@@ -72,18 +71,20 @@ das 26 fotos originais durante o desenvolvimento).
 
 **Fluxo de pagamento mockado**
 Sem integração real com gateway de pagamento (não é o objetivo do
-projeto), mas com uma tela dedicada entre "Completar reserva" e a
-confirmação — validação de formato de cartão, sem processar nada de
-verdade. Fecha a narrativa do fluxo de compra sem a complexidade de
-lidar com dinheiro real.
+projeto). A tela de pagamento oferece duas opções simuladas: transferência
+bancária (o hóspede escolhe um banco e recebe os dados de IBAN para
+"confirmar transferência") ou um QR code fictício ("pagamento expresso")
+com botão "já paguei". Nenhuma das duas processa dados de cartão nem
+dinheiro real. Fecha a narrativa do fluxo de compra sem a complexidade de
+lidar com pagamentos reais.
 
 ## Funcionalidades
 
-- Autenticação completa (cadastro, login, recuperação de senha, validação de idade mínima e força de senha)
+- Autenticação completa (cadastro, login, recuperação de senha, validação de idade mínima de 18 anos e força de senha)
 - Busca e filtro de quartos (tipo, disponibilidade por data, favoritos)
 - Galeria de fotos por quarto com lightbox fullscreen
-- Fluxo de reserva: seleção de datas → dados do hóspede (pré-preenchidos com o usuário logado) → pagamento mockado → confirmação
+- Fluxo de reserva: seleção de datas → dados do hóspede (pré-preenchidos com o usuário logado) → pagamento mockado (transferência bancária simulada ou QR code fictício) → confirmação
 - Minhas Estadias: histórico de reservas confirmadas/passadas, com cancelamento e estado vazio dedicado
 - Avaliações (reviews) por quarto, vinculadas ao perfil do autor
 - Interface bilíngue PT/EN com conteúdo de quartos traduzido no banco
-- PWA instalável, funcional offline para navegação já cacheada.
+- PWA instalável, funcional offline para navegação já cacheada
