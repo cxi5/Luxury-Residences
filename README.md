@@ -9,8 +9,8 @@ front-end.
 
 Para avaliar sem precisar criar conta e confirmar e-mail:
 
-Email: **demo@luxuryresidences.com**
-Senha: **Demo@1234**
+Email: **demo@luxuryresidence.com**
+Senha: Demoaccount@1234*
 
 ---
 
