@@ -4,6 +4,8 @@ App de reservas de hotel (PWA) com fluxo completo de descoberta,
 reserva e gestão de estadias. Supabase como backend, sem frameworks no
 front-end.
 
+![preview](luxestay.webp)
+
 **🔗 Live: [luxuryresidences.pages.dev](https://luxuryresidences.pages.dev)**
 **👤 Conta de demonstração:**
 
